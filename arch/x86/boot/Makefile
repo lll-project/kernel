@@ -59,8 +59,9 @@ $(obj)/cpustr.h: $(obj)/mkcpustr FORCE
 # that way we can complain to the user if the CPU is insufficient.
 KBUILD_CFLAGS	:= $(LINUXINCLUDE) -g -Os -D_SETUP -D__KERNEL__ \
 		   -DDISABLE_BRANCH_PROFILING \
-		   -Wall -Wstrict-prototypes \
-		   -march=i386 -mregparm=3 \
+		   -Wall -W -Wstrict-prototypes \
+		   -Wno-unused-value -Wno-unused-parameter -mno-sse \
+		   -march=i386 -mregparm=3 -no-integrated-as \
 		   -include $(srctree)/$(src)/code16gcc.h \
 		   -fno-strict-aliasing -fomit-frame-pointer \
 		   $(call cc-option, -ffreestanding) \

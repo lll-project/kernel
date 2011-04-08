@@ -270,7 +270,7 @@ void vesa_store_edid(void)
 
 #endif /* not _WAKEUP */
 
-static __videocard video_vesa =
+static __videocard __used video_vesa =
 {
 	.card_name	= "VESA",
 	.probe		= vesa_probe,

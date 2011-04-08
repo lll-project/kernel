@@ -117,7 +117,7 @@ static int bios_probe(void)
 	return nmodes;
 }
 
-static __videocard video_bios =
+static __videocard __used video_bios =
 {
 	.card_name	= "BIOS",
 	.probe		= bios_probe,

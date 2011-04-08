@@ -2343,7 +2343,7 @@ static int sctp_apply_peer_addr_params(struct sctp_paddrparams *params,
 	return 0;
 }
 
-static int sctp_setsockopt_peer_addr_params(struct sock *sk,
+static noinline_for_stack int sctp_setsockopt_peer_addr_params(struct sock *sk,
 					    char __user *optval,
 					    unsigned int optlen)
 {
@@ -2608,7 +2608,7 @@ static int sctp_setsockopt_initmsg(struct sock *sk, char __user *optval, unsigne
  *   sinfo_timetolive.  The user must provide the sinfo_assoc_id field in
  *   to this call if the caller is using the UDP model.
  */
-static int sctp_setsockopt_default_send_param(struct sock *sk,
+static noinline_for_stack int sctp_setsockopt_default_send_param(struct sock *sk,
 					      char __user *optval,
 					      unsigned int optlen)
 {
@@ -2648,7 +2648,7 @@ static int sctp_setsockopt_default_send_param(struct sock *sk,
  * the association primary.  The enclosed address must be one of the
  * association peer's addresses.
  */
-static int sctp_setsockopt_primary_addr(struct sock *sk, char __user *optval,
+static noinline_for_stack int sctp_setsockopt_primary_addr(struct sock *sk, char __user *optval,
 					unsigned int optlen)
 {
 	struct sctp_prim prim;
@@ -2924,7 +2924,7 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
  *   locally bound addresses. The following structure is used to make a
  *   set primary request:
  */
-static int sctp_setsockopt_peer_primary_addr(struct sock *sk, char __user *optval,
+static noinline_for_stack int sctp_setsockopt_peer_primary_addr(struct sock *sk, char __user *optval,
 					     unsigned int optlen)
 {
 	struct sctp_sock	*sp;
@@ -3834,7 +3834,7 @@ SCTP_STATIC void sctp_shutdown(struct sock *sk, int how)
  * number of unacked data chunks, and number of data chunks pending
  * receipt.  This information is read-only.
  */
-static int sctp_getsockopt_sctp_status(struct sock *sk, int len,
+static noinline_for_stack int sctp_getsockopt_sctp_status(struct sock *sk, int len,
 				       char __user *optval,
 				       int __user *optlen)
 {
@@ -3914,7 +3914,7 @@ out:
  * window, and retransmission timer values.  This information is
  * read-only.
  */
-static int sctp_getsockopt_peer_addr_info(struct sock *sk, int len,
+static noinline_for_stack int sctp_getsockopt_peer_addr_info(struct sock *sk, int len,
 					  char __user *optval,
 					  int __user *optlen)
 {
@@ -4207,7 +4207,7 @@ out:
  *                     SPP_SACKDELAY_ENABLE, setting both will have undefined
  *                     results.
  */
-static int sctp_getsockopt_peer_addr_params(struct sock *sk, int len,
+static noinline_for_stack int sctp_getsockopt_peer_addr_params(struct sock *sk, int len,
 					    char __user *optval, int __user *optlen)
 {
 	struct sctp_paddrparams  params;
@@ -4400,7 +4400,7 @@ static int sctp_getsockopt_initmsg(struct sock *sk, int len, char __user *optval
 }
 
 
-static int sctp_getsockopt_peer_addrs(struct sock *sk, int len,
+static noinline_for_stack int sctp_getsockopt_peer_addrs(struct sock *sk, int len,
 				      char __user *optval, int __user *optlen)
 {
 	struct sctp_association *asoc;
@@ -4495,7 +4495,7 @@ static int sctp_copy_laddrs(struct sock *sk, __u16 port, void *to,
 }
 
 
-static int sctp_getsockopt_local_addrs(struct sock *sk, int len,
+static noinline_for_stack int sctp_getsockopt_local_addrs(struct sock *sk, int len,
 				       char __user *optval, int __user *optlen)
 {
 	struct sctp_bind_addr *bp;
@@ -4600,7 +4600,7 @@ out:
  * the association primary.  The enclosed address must be one of the
  * association peer's addresses.
  */
-static int sctp_getsockopt_primary_addr(struct sock *sk, int len,
+static noinline_for_stack int sctp_getsockopt_primary_addr(struct sock *sk, int len,
 					char __user *optval, int __user *optlen)
 {
 	struct sctp_prim prim;
@@ -4681,7 +4681,7 @@ static int sctp_getsockopt_adaptation_layer(struct sock *sk, int len,
  *
  *   For getsockopt, it get the default sctp_sndrcvinfo structure.
  */
-static int sctp_getsockopt_default_send_param(struct sock *sk,
+static noinline_for_stack int sctp_getsockopt_default_send_param(struct sock *sk,
 					int len, char __user *optval,
 					int __user *optlen)
 {
@@ -4815,7 +4815,7 @@ static int sctp_getsockopt_rtoinfo(struct sock *sk, int len,
  * See [SCTP] for more information.
  *
  */
-static int sctp_getsockopt_associnfo(struct sock *sk, int len,
+static noinline_for_stack int sctp_getsockopt_associnfo(struct sock *sk, int len,
 				     char __user *optval,
 				     int __user *optlen)
 {

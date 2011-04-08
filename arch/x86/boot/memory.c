@@ -64,7 +64,7 @@ static int detect_memory_e820(void)
 			break;
 		}
 
-		*desc++ = buf;
+		memcpy(desc++, &buf, sizeof buf);
 		count++;
 	} while (ireg.ebx && count < ARRAY_SIZE(boot_params.e820_map));
 

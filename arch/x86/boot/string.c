@@ -14,7 +14,7 @@
 
 #include "boot.h"
 
-int strcmp(const char *str1, const char *str2)
+asmlinkage int strcmp(const char *str1, const char *str2)
 {
 	const unsigned char *s1 = (const unsigned char *)str1;
 	const unsigned char *s2 = (const unsigned char *)str2;
@@ -30,7 +30,7 @@ int strcmp(const char *str1, const char *str2)
 	return 0;
 }
 
-int strncmp(const char *cs, const char *ct, size_t count)
+asmlinkage int strncmp(const char *cs, const char *ct, size_t count)
 {
 	unsigned char c1, c2;
 
@@ -46,7 +46,7 @@ int strncmp(const char *cs, const char *ct, size_t count)
 	return 0;
 }
 
-size_t strnlen(const char *s, size_t maxlen)
+asmlinkage size_t strnlen(const char *s, size_t maxlen)
 {
 	const char *es = s;
 	while (*es && maxlen) {

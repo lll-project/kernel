@@ -213,7 +213,8 @@ static int __init boot_delay_setup(char *str)
 	unsigned long lpj;
 
 	lpj = preset_lpj ? preset_lpj : 1000000;	/* some guess */
-	loops_per_msec = (unsigned long long)lpj / 1000 * HZ;
+	loops_per_msec = lpj;
+	do_div(loops_per_msec, 1000 * HZ);
 
 	get_option(&str, &boot_delay);
 	if (boot_delay > 10 * 1000)

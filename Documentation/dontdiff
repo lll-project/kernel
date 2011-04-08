@@ -1,5 +1,6 @@
 *.a
 *.aux
+*.bc
 *.bin
 *.cpio
 *.csp
@@ -17,6 +18,7 @@
 *.i
 *.jpeg
 *.ko
+*.ll
 *.log
 *.lst
 *.moc
@@ -26,6 +28,7 @@
 *.orig
 *.out
 *.pdf
+*.plist
 *.png
 *.ps
 *.rej

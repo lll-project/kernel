@@ -1215,7 +1215,7 @@ loop_info64_to_old(const struct loop_info64 *info64, struct loop_info *info)
 	return 0;
 }
 
-static int
+static noinline_for_stack int
 loop_set_status_old(struct loop_device *lo, const struct loop_info __user *arg)
 {
 	struct loop_info info;
@@ -1227,7 +1227,7 @@ loop_set_status_old(struct loop_device *lo, const struct loop_info __user *arg)
 	return loop_set_status(lo, &info64);
 }
 
-static int
+static noinline_for_stack int
 loop_set_status64(struct loop_device *lo, const struct loop_info64 __user *arg)
 {
 	struct loop_info64 info64;
@@ -1237,7 +1237,7 @@ loop_set_status64(struct loop_device *lo, const struct loop_info64 __user *arg)
 	return loop_set_status(lo, &info64);
 }
 
-static int
+static noinline_for_stack int
 loop_get_status_old(struct loop_device *lo, struct loop_info __user *arg) {
 	struct loop_info info;
 	struct loop_info64 info64;
@@ -1255,7 +1255,7 @@ loop_get_status_old(struct loop_device *lo, struct loop_info __user *arg) {
 	return err;
 }
 
-static int
+static noinline_for_stack int
 loop_get_status64(struct loop_device *lo, struct loop_info64 __user *arg) {
 	struct loop_info64 info64;
 	int err = 0;

@@ -739,7 +739,7 @@ static int __init dynamic_debug_init(void)
 	int ret = 0;
 	int n = 0;
 
-	if (__start___verbose != __stop___verbose) {
+	if (&__start___verbose != &__stop___verbose) {
 		iter = __start___verbose;
 		modname = iter->modname;
 		iter_start = iter;

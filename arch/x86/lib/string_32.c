@@ -14,7 +14,7 @@
 #include <linux/module.h>
 
 #ifdef __HAVE_ARCH_STRCPY
-char *strcpy(char *dest, const char *src)
+asmlinkage char *strcpy(char *dest, const char *src)
 {
 	int d0, d1, d2;
 	asm volatile("1:\tlodsb\n\t"
@@ -29,7 +29,7 @@ EXPORT_SYMBOL(strcpy);
 #endif
 
 #ifdef __HAVE_ARCH_STRNCPY
-char *strncpy(char *dest, const char *src, size_t count)
+asmlinkage char *strncpy(char *dest, const char *src, size_t count)
 {
 	int d0, d1, d2, d3;
 	asm volatile("1:\tdecl %2\n\t"
@@ -49,7 +49,7 @@ EXPORT_SYMBOL(strncpy);
 #endif
 
 #ifdef __HAVE_ARCH_STRCAT
-char *strcat(char *dest, const char *src)
+asmlinkage char *strcat(char *dest, const char *src)
 {
 	int d0, d1, d2, d3;
 	asm volatile("repne\n\t"
@@ -67,7 +67,7 @@ EXPORT_SYMBOL(strcat);
 #endif
 
 #ifdef __HAVE_ARCH_STRNCAT
-char *strncat(char *dest, const char *src, size_t count)
+asmlinkage char *strncat(char *dest, const char *src, size_t count)
 {
 	int d0, d1, d2, d3;
 	asm volatile("repne\n\t"
@@ -91,7 +91,7 @@ EXPORT_SYMBOL(strncat);
 #endif
 
 #ifdef __HAVE_ARCH_STRCMP
-int strcmp(const char *cs, const char *ct)
+asmlinkage int strcmp(const char *cs, const char *ct)
 {
 	int d0, d1;
 	int res;
@@ -114,7 +114,7 @@ EXPORT_SYMBOL(strcmp);
 #endif
 
 #ifdef __HAVE_ARCH_STRNCMP
-int strncmp(const char *cs, const char *ct, size_t count)
+asmlinkage int strncmp(const char *cs, const char *ct, size_t count)
 {
 	int res;
 	int d0, d1, d2;
@@ -139,7 +139,7 @@ EXPORT_SYMBOL(strncmp);
 #endif
 
 #ifdef __HAVE_ARCH_STRCHR
-char *strchr(const char *s, int c)
+asmlinkage char *strchr(const char *s, int c)
 {
 	int d0;
 	char *res;
@@ -161,7 +161,7 @@ EXPORT_SYMBOL(strchr);
 #endif
 
 #ifdef __HAVE_ARCH_STRLEN
-size_t strlen(const char *s)
+asmlinkage size_t strlen(const char *s)
 {
 	int d0;
 	int res;
@@ -178,7 +178,7 @@ EXPORT_SYMBOL(strlen);
 #endif
 
 #ifdef __HAVE_ARCH_MEMCHR
-void *memchr(const void *cs, int c, size_t count)
+asmlinkage void *memchr(const void *cs, int c, size_t count)
 {
 	int d0;
 	void *res;
@@ -215,7 +215,7 @@ EXPORT_SYMBOL(memscan);
 #endif
 
 #ifdef __HAVE_ARCH_STRNLEN
-size_t strnlen(const char *s, size_t count)
+asmlinkage size_t strnlen(const char *s, size_t count)
 {
 	int d0;
 	int res;

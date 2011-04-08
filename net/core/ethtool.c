@@ -171,7 +171,7 @@ EXPORT_SYMBOL(ethtool_ntuple_flush);
 
 /* Handlers for each ethtool command */
 
-static int ethtool_get_settings(struct net_device *dev, void __user *useraddr)
+static noinline_for_stack int ethtool_get_settings(struct net_device *dev, void __user *useraddr)
 {
 	struct ethtool_cmd cmd = { .cmd = ETHTOOL_GSET };
 	int err;
@@ -188,7 +188,7 @@ static int ethtool_get_settings(struct net_device *dev, void __user *useraddr)
 	return 0;
 }
 
-static int ethtool_set_settings(struct net_device *dev, void __user *useraddr)
+static noinline_for_stack int ethtool_set_settings(struct net_device *dev, void __user *useraddr)
 {
 	struct ethtool_cmd cmd;
 
