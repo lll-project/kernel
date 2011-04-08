@@ -79,7 +79,7 @@ qla2x00_ctx_sp_free(srb_t *sp)
 	QLA_VHA_MARK_NOT_BUSY(vha);
 }
 
-inline srb_t *
+srb_t *
 qla2x00_get_ctx_sp(scsi_qla_host_t *vha, fc_port_t *fcport, size_t size,
     unsigned long tmo)
 {
@@ -2111,7 +2111,7 @@ qla2x00_configure_hba(scsi_qla_host_t *vha)
 	return(rval);
 }
 
-inline void
+void
 qla2x00_set_model_info(scsi_qla_host_t *vha, uint8_t *model, size_t len,
 	char *def)
 {
