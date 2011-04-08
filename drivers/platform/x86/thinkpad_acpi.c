@@ -2358,43 +2358,15 @@ static void hotkey_compare_and_issue_event(struct tp_nvram_state *oldn,
 		if ((event_mask & (1 << __scancode)) && \
 		    oldn->__member != newn->__member) \
 			tpacpi_hotkey_send_key(__scancode); \
-	} while (0)
+	} while (0) \
+  //
 
 #define TPACPI_MAY_SEND_KEY(__scancode) \
 	do { \
 		if (event_mask & (1 << __scancode)) \
 			tpacpi_hotkey_send_key(__scancode); \
-	} while (0)
-
-	void issue_volchange(const unsigned int oldvol,
-			     const unsigned int newvol)
-	{
-		unsigned int i = oldvol;
-
-		while (i > newvol) {
-			TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_VOLUMEDOWN);
-			i--;
-		}
-		while (i < newvol) {
-			TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_VOLUMEUP);
-			i++;
-		}
-	}
-
-	void issue_brightnesschange(const unsigned int oldbrt,
-				    const unsigned int newbrt)
-	{
-		unsigned int i = oldbrt;
-
-		while (i > newbrt) {
-			TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_FNEND);
-			i--;
-		}
-		while (i < newbrt) {
-			TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_FNHOME);
-			i++;
-		}
-	}
+	} while (0)                              \
+  //
 
 	TPACPI_COMPARE_KEY(TP_ACPI_HOTKEYSCAN_THINKPAD, thinkpad_toggle);
 	TPACPI_COMPARE_KEY(TP_ACPI_HOTKEYSCAN_FNSPACE, zoom_toggle);
@@ -2439,7 +2411,16 @@ static void hotkey_compare_and_issue_event(struct tp_nvram_state *oldn,
 			TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_VOLUMEUP);
 		}
 		if (oldn->volume_level != newn->volume_level) {
-			issue_volchange(oldn->volume_level, newn->volume_level);
+		  unsigned int i = oldn->volume_level;
+
+		  while (i > newn->volume_level) {
+			  TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_VOLUMEDOWN);
+			  i--;
+		  }
+		  while (i < newn->volume_level) {
+			  TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_VOLUMEUP);
+			  i++;
+		  }
 		} else if (oldn->volume_toggle != newn->volume_toggle) {
 			/* repeated vol up/down keypress at end of scale ? */
 			if (newn->volume_level == 0)
@@ -2451,8 +2432,16 @@ static void hotkey_compare_and_issue_event(struct tp_nvram_state *oldn,
 
 	/* handle brightness */
 	if (oldn->brightness_level != newn->brightness_level) {
-		issue_brightnesschange(oldn->brightness_level,
-				       newn->brightness_level);
+		unsigned int i = oldn->brightness_level;
+
+		while (i > newn->brightness_level) {
+			TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_FNEND);
+			i--;
+		}
+		while (i < newn->brightness_level) {
+			TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_FNHOME);
+			i++;
+		}
 	} else if (oldn->brightness_toggle != newn->brightness_toggle) {
 		/* repeated key presses that didn't change state */
 		if (newn->brightness_level == 0)
