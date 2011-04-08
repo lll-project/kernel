@@ -61,7 +61,7 @@
 #endif
 
 #if __GNUC_MINOR__ > 0
-#define __compiletime_object_size(obj) __builtin_object_size((void*)obj, 0)
+#define __compiletime_object_size(obj) __builtin_object_size((void*)(obj), 0)
 #endif
 #if __GNUC_MINOR__ >= 4
 #define __compiletime_warning(message) __attribute__((warning(message)))
