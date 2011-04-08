@@ -628,7 +628,7 @@ static int __devinit fnic_probe(struct pci_dev *pdev,
 			     "firmware supports FIP\n");
 		/* enable directed and multicast */
 		vnic_dev_packet_filter(fnic->vdev, 1, 1, 0, 0, 0);
-		vnic_dev_add_addr(fnic->vdev, FIP_ALL_ENODE_MACS);
+		vnic_dev_add_addr(fnic->vdev, ((u8[6])) FIP_ALL_ENODE_MACS);
 		vnic_dev_add_addr(fnic->vdev, fnic->ctlr.ctl_src_addr);
 		fcoe_ctlr_init(&fnic->ctlr, FIP_MODE_AUTO);
 	} else {
