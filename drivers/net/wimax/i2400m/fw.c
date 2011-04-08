@@ -650,7 +650,8 @@ static int i2400m_download_chunk(struct i2400m *i2400m, const void *chunk,
 	struct device *dev = i2400m_dev(i2400m);
 	struct {
 		struct i2400m_bootrom_header cmd;
-		u8 cmd_payload[chunk_len];
+    // WARN: wash: VLAIS fix,this kinda sucks, fix
+		u8 cmd_payload[sizeof(i2400m->bus_bm_pokes_table[0].data)];
 	} __packed *buf;
 	struct i2400m_bootrom_header ack;
 
