@@ -212,15 +212,8 @@ struct global_regs {			/* Location: */
 #define INDEX10(x)	((x) & ET_DMA10_MASK)
 #define INDEX4(x)	((x) & ET_DMA4_MASK)
 
-extern inline void add_10bit(u32 *v, int n)
-{
-	*v = INDEX10(*v + n) | (*v & ET_DMA10_WRAP);
-}
-
-extern inline void add_12bit(u32 *v, int n)
-{
-	*v = INDEX12(*v + n) | (*v & ET_DMA12_WRAP);
-}
+#define add_10bit(v, n) ((*v = INDEX10(*v + n)) | (*v & ET_DMA10_WRAP))
+#define add_12bit(v, n) ((*v = INDEX12(*v + n)) | (*v & ET_DMA12_WRAP))
 
 /*
  * 10bit DMA with wrap
