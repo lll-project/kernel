@@ -321,10 +321,10 @@ static int fcoe_interface_setup(struct fcoe_interface *fcoe,
 	if (fip->spma)
 		dev_uc_add(netdev, fip->ctl_src_addr);
 	if (fip->mode == FIP_MODE_VN2VN) {
-		dev_mc_add(netdev, FIP_ALL_VN2VN_MACS);
-		dev_mc_add(netdev, FIP_ALL_P2P_MACS);
+		dev_mc_add(netdev, ((u8[6])) FIP_ALL_VN2VN_MACS);
+		dev_mc_add(netdev, ((u8[6])) FIP_ALL_P2P_MACS);
 	} else
-		dev_mc_add(netdev, FIP_ALL_ENODE_MACS);
+		dev_mc_add(netdev, ((u8[6])) FIP_ALL_ENODE_MACS);
 
 	/*
 	 * setup the receive function from ethernet driver
@@ -413,10 +413,10 @@ void fcoe_interface_cleanup(struct fcoe_interface *fcoe)
 	if (fip->spma)
 		dev_uc_del(netdev, fip->ctl_src_addr);
 	if (fip->mode == FIP_MODE_VN2VN) {
-		dev_mc_del(netdev, FIP_ALL_VN2VN_MACS);
-		dev_mc_del(netdev, FIP_ALL_P2P_MACS);
+		dev_mc_del(netdev, ((u8[6])) FIP_ALL_VN2VN_MACS);
+		dev_mc_del(netdev, ((u8[6])) FIP_ALL_P2P_MACS);
 	} else
-		dev_mc_del(netdev, FIP_ALL_ENODE_MACS);
+		dev_mc_del(netdev, ((u8[6])) FIP_ALL_ENODE_MACS);
 
 	/* Tell the LLD we are done w/ FCoE */
 	ops = netdev->netdev_ops;

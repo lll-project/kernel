@@ -45,11 +45,11 @@
 /*
  * Multicast MAC addresses.  T11-adopted.
  */
-#define FIP_ALL_FCOE_MACS	((__u8[6]) { 1, 0x10, 0x18, 1, 0, 0 })
-#define FIP_ALL_ENODE_MACS	((__u8[6]) { 1, 0x10, 0x18, 1, 0, 1 })
-#define FIP_ALL_FCF_MACS	((__u8[6]) { 1, 0x10, 0x18, 1, 0, 2 })
-#define FIP_ALL_VN2VN_MACS	((__u8[6]) { 1, 0x10, 0x18, 1, 0, 4 })
-#define FIP_ALL_P2P_MACS	((__u8[6]) { 1, 0x10, 0x18, 1, 0, 5 })
+#define FIP_ALL_FCOE_MACS	  { 1, 0x10, 0x18, 1, 0, 0 }
+#define FIP_ALL_ENODE_MACS	{ 1, 0x10, 0x18, 1, 0, 1 }
+#define FIP_ALL_FCF_MACS	  { 1, 0x10, 0x18, 1, 0, 2 }
+#define FIP_ALL_VN2VN_MACS	{ 1, 0x10, 0x18, 1, 0, 4 }
+#define FIP_ALL_P2P_MACS	  { 1, 0x10, 0x18, 1, 0, 5 }
 
 #define FIP_VER		1		/* version for fip_header */
 
