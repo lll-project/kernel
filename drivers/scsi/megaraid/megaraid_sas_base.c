@@ -198,7 +198,7 @@ struct megasas_cmd *megasas_get_cmd(struct megasas_instance
  * @instance:		Adapter soft state
  * @cmd:		Command packet to be returned to free command pool
  */
-inline void
+void
 megasas_return_cmd(struct megasas_instance *instance, struct megasas_cmd *cmd)
 {
 	unsigned long flags;
@@ -1305,7 +1305,7 @@ megasas_build_ldio(struct megasas_instance *instance, struct scsi_cmnd *scp,
  * Called by megasas_queue_command to find out if the command to be queued
  * is a logical drive command
  */
-inline int megasas_is_ldio(struct scsi_cmnd *cmd)
+int megasas_is_ldio(struct scsi_cmnd *cmd)
 {
 	if (!MEGASAS_IS_LOGICAL(cmd))
 		return 0;
