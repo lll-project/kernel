@@ -317,8 +317,7 @@ struct group_dual {
 			_POST_EFLAGS("0", "4", "1")			\
 			: "=m" (_eflags), "=&r" (_tmp),			\
 			  "+a" (_rax), "+d" (_rdx)			\
-			: "i" (EFLAGS_MASK), "m" ((_src).val),		\
-			  "a" (_rax), "d" (_rdx));			\
+			: "i" (EFLAGS_MASK), "m" ((_src).val));		\
 	} while (0)
 
 #define __emulate_1op_rax_rdx_ex(_op, _src, _rax, _rdx, _eflags, _suffix, _ex) \
@@ -338,8 +337,7 @@ struct group_dual {
 			_ASM_EXTABLE(1b, 3b)				\
 			: "=m" (_eflags), "=&r" (_tmp),			\
 			  "+a" (_rax), "+d" (_rdx), "+qm"(_ex)		\
-			: "i" (EFLAGS_MASK), "m" ((_src).val),		\
-			  "a" (_rax), "d" (_rdx));			\
+			: "i" (EFLAGS_MASK), "m" ((_src).val));		\
 	} while (0)
 
 /* instruction has only one source operand, destination is implicit (e.g. mul, div, imul, idiv) */

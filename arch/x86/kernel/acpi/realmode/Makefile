@@ -32,7 +32,7 @@ KBUILD_CFLAGS	:= $(LINUXINCLUDE) -g -Os -D_SETUP -D_WAKEUP -D__KERNEL__ \
 		   -I$(srctree)/$(bootsrc) \
 		   $(cflags-y) \
 		   -Wall -Wstrict-prototypes \
-		   -march=i386 -mregparm=3 \
+		   -march=i386 -mregparm=3 -no-integrated-as \
 		   -include $(srctree)/$(bootsrc)/code16gcc.h \
 		   -fno-strict-aliasing -fomit-frame-pointer \
 		   $(call cc-option, -ffreestanding) \

@@ -371,7 +371,7 @@ struct apm_user {
 static struct {
 	unsigned long	offset;
 	unsigned short	segment;
-} apm_bios_entry;
+} apm_bios_entry __used;
 static int clock_slowed;
 static int idle_threshold __read_mostly = DEFAULT_IDLE_THRESHOLD;
 static int idle_period __read_mostly = DEFAULT_IDLE_PERIOD;

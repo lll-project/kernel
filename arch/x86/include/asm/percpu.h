@@ -486,7 +486,7 @@ do {									\
 #define x86_test_and_clear_bit_percpu(bit, var)				\
 ({									\
 	int old__;							\
-	asm volatile("btr %2,"__percpu_arg(1)"\n\tsbbl %0,%0"		\
+	asm volatile("btrl %2,"__percpu_arg(1)"\n\tsbbl %0,%0"		\
 		     : "=r" (old__), "+m" (var)				\
 		     : "dIr" (bit));					\
 	old__;								\

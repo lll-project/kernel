@@ -201,11 +201,10 @@ long strnlen_user(const char __user *s, long n)
 
 	might_fault();
 
-	__asm__ __volatile__(
-		__COPYUSER_SET_ES
-		"	testl %0, %0\n"
-		"	jz 3f\n"
-		"	andl %0,%%ecx\n"
+	if (!n)
+		res = 1;
+	else
+		__asm__ __volatile__(
 		"0:	repne; scasb\n"
 		"	setne %%al\n"
 		"	subl %%ecx,%0\n"
@@ -215,15 +214,13 @@ long strnlen_user(const char __user *s, long n)
 		".section .fixup,\"ax\"\n"
 		"2:	xorl %%eax,%%eax\n"
 		"	jmp 1b\n"
-		"3:	movb $1,%%al\n"
-		"	jmp 1b\n"
 		".previous\n"
 		".section __ex_table,\"a\"\n"
 		"	.align 4\n"
 		"	.long 0b,2b\n"
 		".previous"
-		:"=&r" (n), "=&D" (s), "=&a" (res), "=&c" (tmp)
-		:"0" (n), "1" (s), "2" (0), "3" (mask)
+		:"=&r" (n), "=&D" (s), "=a" (res), "=&c" (tmp)
+		:"0" (n), "1" (s), "2" (0), "3" (n & mask)
 		:"cc");
 	return res & mask;
 }

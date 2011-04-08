@@ -26,6 +26,17 @@
 	addq $0x38, %rsp
 	.endm
 
+#else
+
+#define HAVE_ARCH_CALLER_ADDR
+
+#define CALLER_ADDR0 ((unsigned long)__builtin_return_address(0))
+#define CALLER_ADDR1 0UL
+#define CALLER_ADDR2 0UL
+#define CALLER_ADDR3 0UL
+#define CALLER_ADDR4 0UL
+#define CALLER_ADDR5 0UL
+#define CALLER_ADDR6 0UL
 #endif
 
 #ifdef CONFIG_FUNCTION_TRACER

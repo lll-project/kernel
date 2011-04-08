@@ -402,6 +402,7 @@ SECTIONS
 		__bss_start = .;
 		*(.bss..page_aligned)
 		*(.bss)
+		*(.gnu.linkonce.b.*)
 		. = ALIGN(PAGE_SIZE);
 		__bss_stop = .;
 	}

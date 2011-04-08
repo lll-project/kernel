@@ -93,7 +93,7 @@ void *extend_brk(size_t size, size_t align);
 		asm volatile (						\
 			".pushsection .brk_reservation,\"aw\",@nobits;" \
 			".brk." #name ":"				\
-			" 1:.skip %c0;"					\
+			" 1:.space %c0;"					\
 			" .size .brk." #name ", . - 1b;"		\
 			" .popsection"					\
 			: : "i" (sz));					\
@@ -119,7 +119,7 @@ void __init x86_64_start_reservations(char *real_mode_data);
 #define RESERVE_BRK(name,sz)				\
 	.pushsection .brk_reservation,"aw",@nobits;	\
 .brk.name:						\
-1:	.skip sz;					\
+1:	.space sz;					\
 	.size .brk.name,.-1b;				\
 	.popsection
 #endif /* __ASSEMBLY__ */

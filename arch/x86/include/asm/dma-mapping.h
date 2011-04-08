@@ -93,7 +93,7 @@ static inline unsigned long dma_alloc_coherent_mask(struct device *dev,
 
 	dma_mask = dev->coherent_dma_mask;
 	if (!dma_mask)
-		dma_mask = (gfp & GFP_DMA) ? DMA_BIT_MASK(24) : DMA_BIT_MASK(32);
+		dma_mask = (gfp & GFP_DMA) ? (unsigned long)DMA_BIT_MASK(24) : (unsigned long)DMA_BIT_MASK(32);
 
 	return dma_mask;
 }

@@ -339,7 +339,7 @@ static inline int bitstream_get_bits(struct bitstream *bs, u64 *out, int bits)
  */
 static inline int vli_encode_bits(struct bitstream *bs, u64 in)
 {
-	u64 code = code;
+	u64 uninitialized_var(code);
 	int bits = __vli_encode_bits(&code, in);
 
 	if (bits <= 0)

@@ -6,28 +6,28 @@
 /* Let gcc decide whether to inline or use the out of line functions */
 
 #define __HAVE_ARCH_STRCPY
-extern char *strcpy(char *dest, const char *src);
+extern __attribute__((regparm(0))) char *strcpy(char *dest, const char *src);
 
 #define __HAVE_ARCH_STRNCPY
-extern char *strncpy(char *dest, const char *src, size_t count);
+extern __attribute__((regparm(0))) char *strncpy(char *dest, const char *src, size_t count);
 
 #define __HAVE_ARCH_STRCAT
-extern char *strcat(char *dest, const char *src);
+extern __attribute__((regparm(0))) char *strcat(char *dest, const char *src);
 
 #define __HAVE_ARCH_STRNCAT
-extern char *strncat(char *dest, const char *src, size_t count);
+extern __attribute__((regparm(0))) char *strncat(char *dest, const char *src, size_t count);
 
 #define __HAVE_ARCH_STRCMP
-extern int strcmp(const char *cs, const char *ct);
+extern __attribute__((regparm(0))) int strcmp(const char *cs, const char *ct);
 
 #define __HAVE_ARCH_STRNCMP
-extern int strncmp(const char *cs, const char *ct, size_t count);
+extern __attribute__((regparm(0))) int strncmp(const char *cs, const char *ct, size_t count);
 
 #define __HAVE_ARCH_STRCHR
-extern char *strchr(const char *s, int c);
+extern __attribute__((regparm(0))) char *strchr(const char *s, int c);
 
 #define __HAVE_ARCH_STRLEN
-extern size_t strlen(const char *s);
+extern __attribute__((regparm(0))) size_t strlen(const char *s);
 
 static __always_inline void *__memcpy(void *to, const void *from, size_t n)
 {
@@ -142,6 +142,7 @@ static __always_inline void *__constant_memcpy(void *to, const void *from,
 }
 
 #define __HAVE_ARCH_MEMCPY
+extern __attribute__((regparm(0))) void *memcpy(void *to, const void *from, size_t len);
 
 #ifdef CONFIG_X86_USE_3DNOW
 
@@ -197,12 +198,12 @@ static inline void *__memcpy3d(void *to, const void *from, size_t len)
 #endif
 
 #define __HAVE_ARCH_MEMMOVE
-void *memmove(void *dest, const void *src, size_t n);
+extern __attribute__((regparm(0))) void *memmove(void *dest, const void *src, size_t n);
 
-#define memcmp __builtin_memcmp
+extern int memcmp(const void *cs, const void *ct, size_t count);
 
 #define __HAVE_ARCH_MEMCHR
-extern void *memchr(const void *cs, int c, size_t count);
+extern __attribute__((regparm(0))) void *memchr(const void *cs, int c, size_t count);
 
 static inline void *__memset_generic(void *s, char c, size_t count)
 {
@@ -243,11 +244,11 @@ void *__constant_c_memset(void *s, unsigned long c, size_t count)
 
 /* Added by Gertjan van Wingerde to make minix and sysv module work */
 #define __HAVE_ARCH_STRNLEN
-extern size_t strnlen(const char *s, size_t count);
+extern __attribute__((regparm(0))) size_t strnlen(const char *s, size_t count);
 /* end of additional stuff */
 
 #define __HAVE_ARCH_STRSTR
-extern char *strstr(const char *cs, const char *ct);
+extern __attribute__((regparm(0))) char *strstr(const char *cs, const char *ct);
 
 /*
  * This looks horribly ugly, but the compiler can optimize it totally,
@@ -321,6 +322,8 @@ void *__constant_c_and_count_memset(void *s, unsigned long pattern,
 	 : __memset_generic((s), (c), (count)))
 
 #define __HAVE_ARCH_MEMSET
+extern __attribute__((regparm(0))) void *memset(void *s, int c, size_t count);
+
 #if (__GNUC__ >= 4)
 #define memset(s, c, count) __builtin_memset(s, c, count)
 #else

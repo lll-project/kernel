@@ -1,6 +1,6 @@
 #include <linux/string.h>
 
-char *strstr(const char *cs, const char *ct)
+__attribute__((regparm(0))) char *strstr(const char *cs, const char *ct)
 {
 int	d0, d1;
 register char *__res;
