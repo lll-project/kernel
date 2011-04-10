@@ -1574,7 +1574,7 @@ config CC_STACKPROTECTOR
 	  overflows (that need to overwrite this return address) now also
 	  overwrite the canary, which gets detected and the attack is then
 	  neutralized via a kernel panic.
-	  This feature requires gcc version 4.2 or above.
+	  This feature requires gcc version 4.2+ or clang version 2.9+.
 
 config DEPRECATED_PARAM_STRUCT
 	bool "Provide old way to pass kernel parameters"
@@ -1830,7 +1830,7 @@ config FPE_NWFPE_XP
 	help
 	  Say Y to include 80-bit support in the kernel floating-point
 	  emulator.  Otherwise, only 32 and 64-bit support is compiled in.
-	  Note that gcc does not generate 80-bit operations by default,
+	  Note that most compilers does not generate 80-bit operations by default,
 	  so in most cases this option only enlarges the size of the
 	  floating point emulator without any good reason.
 

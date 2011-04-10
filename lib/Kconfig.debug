@@ -26,15 +26,15 @@ config ENABLE_MUST_CHECK
 	  attribute warn_unused_result" messages.
 
 config FRAME_WARN
-	int "Warn for stack frames larger than (needs gcc 4.4)"
+	int "Warn for stack frames larger than"
 	range 0 8192
 	default 1024 if !64BIT
 	default 2048 if 64BIT
 	help
-	  Tell gcc to warn at build time for stack frames larger than this.
+	  Tell the compiler to warn at build time for stack frames larger than this.
 	  Setting this too low will cause a lot of warnings.
 	  Setting it to 0 disables the warning.
-	  Requires gcc 4.4
+	  Requires gcc 4.4 or a compatible compiler
 
 config MAGIC_SYSRQ
 	bool "Magic SysRq key"
@@ -119,11 +119,11 @@ config DEBUG_SECTION_MISMATCH
 	  The section mismatch analysis is always done after a full
 	  kernel build but enabling this option will in addition
 	  do the following:
-	  - Add the option -fno-inline-functions-called-once to gcc
+	  - Add the option -fno-inline-functions-called-once to the compiler.
 	    When inlining a function annotated __init in a non-init
 	    function we would lose the section information and thus
 	    the analysis would not catch the illegal reference.
-	    This option tells gcc to inline less but will also
+	    This option tells the compiler to inline less but will also
 	    result in a larger kernel.
 	  - Run the section mismatch analysis for each module/built-in.o
 	    When we run the section mismatch analysis on vmlinux.o we
@@ -673,7 +673,7 @@ config DEBUG_INFO
 	help
           If you say Y here the resulting kernel image will include
 	  debugging info resulting in a larger kernel image.
-	  This adds debug symbols to the kernel and modules (gcc -g), and
+	  This adds debug symbols to the kernel and modules (cc -g), and
 	  is needed if you intend to use kernel crashdump or binary object
 	  tools like crash, kgdb, LKCD, gdb, etc on the kernel.
 	  Say Y here only if you plan to debug the kernel.
@@ -684,14 +684,13 @@ config DEBUG_INFO_REDUCED
 	bool "Reduce debugging information"
 	depends on DEBUG_INFO
 	help
-	  If you say Y here gcc is instructed to generate less debugging
+	  If you say Y here the compiler is instructed to generate less debugging
 	  information for structure types. This means that tools that
 	  need full debugging information (like kgdb or systemtap) won't
 	  be happy. But if you merely need debugging information to
 	  resolve line numbers there is no loss. Advantage is that
 	  build directory object sizes shrink dramatically over a full
 	  DEBUG_INFO build and compile times are reduced too.
-	  Only works with newer gcc versions.
 
 config DEBUG_VM
 	bool "Debug VM"

@@ -649,7 +649,7 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
 KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
 
 # check for 'asm goto'
-ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC)), y)
+ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/cc-goto.sh $(CC)), y)
 	KBUILD_CFLAGS += -DCC_HAVE_ASM_GOTO
 endif
 

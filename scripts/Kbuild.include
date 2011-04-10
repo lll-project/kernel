@@ -12,7 +12,7 @@ space   := $(empty) $(empty)
 dot-target = $(dir $@).$(notdir $@)
 
 ###
-# The temporary file to save gcc -MD generated dependencies must not
+# The temporary file to save cc -MD generated dependencies must not
 # contain a comma
 depfile = $(subst $(comma),_,$(dot-target).d)
 
@@ -60,7 +60,7 @@ define filechk
 endef
 
 ######
-# gcc support functions
+# cc support functions
 # See documentation in Documentation/kbuild/makefiles.txt
 
 # cc-cross-prefix
@@ -119,13 +119,13 @@ cc-option-align = $(subst -functions=0,,\
 	$(call cc-option,-falign-functions=0,-malign-functions=0))
 
 # cc-version
-# Usage gcc-ver := $(call cc-version)
-cc-version = $(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-version.sh $(CC))
+# Usage cc-ver := $(call cc-version)
+cc-version = $(shell $(CONFIG_SHELL) $(srctree)/scripts/cc-version.sh $(CC))
 
 # cc-fullversion
-# Usage gcc-ver := $(call cc-fullversion)
+# Usage cc-ver := $(call cc-fullversion)
 cc-fullversion = $(shell $(CONFIG_SHELL) \
-	$(srctree)/scripts/gcc-version.sh -p $(CC))
+	$(srctree)/scripts/cc-version.sh -p $(CC))
 
 # cc-ifversion
 # Usage:  EXTRA_CFLAGS += $(call cc-ifversion, -lt, 0402, -O1)

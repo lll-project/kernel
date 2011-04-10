@@ -3,13 +3,29 @@
 # from userspace.
 #
 
-CC	 = gcc
+ifeq ($(CC),)
+  CC = $(CROSS_COMPILE)gcc
+endif
+
+ifeq ($(LD),)
+  LD = $(CROSS_COMPILE)ld
+endif
+
+ifeq ($(AR),)
+  AR = $(CROSS_COMPILE)ar
+endif
+
+ifeq ($(RANLIB),)
+  RANLIB = ranlib 
+endif
+
+ifeq ($(NM),)
+  NM = $(CROSS_COMPILE)nm
+endif
+
 OPTFLAGS = -O2			# Adjust as desired
 CFLAGS	 = -I.. -I ../../../include -g $(OPTFLAGS)
-LD	 = ld
 AWK	 = awk -f
-AR	 = ar
-RANLIB	 = ranlib
 
 .c.o:
 	$(CC) $(CFLAGS) -c -o $@ $<

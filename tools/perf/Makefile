@@ -268,8 +268,14 @@ lib = lib
 
 export prefix bindir sharedir sysconfdir
 
-CC = $(CROSS_COMPILE)gcc
-AR = $(CROSS_COMPILE)ar
+ifeq ($(CC),)
+  CC = $(CROSS_COMPILE)gcc
+endif
+
+ifeq ($(AR),)
+  AR = $(CROSS_COMPILE)ar
+endif
+
 RM = rm -f
 MKDIR = mkdir
 TAR = tar
