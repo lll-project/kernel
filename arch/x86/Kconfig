@@ -1494,10 +1494,10 @@ config CC_STACKPROTECTOR
 	  overwrite the canary, which gets detected and the attack is then
 	  neutralized via a kernel panic.
 
-	  This feature requires gcc version 4.2 or above, or a distribution
-	  gcc with the feature backported. Older versions are automatically
-	  detected and for those versions, this configuration option is
-	  ignored. (and a warning is printed during bootup)
+	  This feature requires gcc version 4.2+ or clang version 2.9+.
+	  Older versions of gcc are automatically detected and for those versions,
+	  this configuration option is ignored. (and a warning is printed during
+	  bootup)
 
 source kernel/Kconfig.hz
 

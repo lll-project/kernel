@@ -6,7 +6,7 @@
 # and listed below so they are ignored.
 #
 # Usage:
-# checksyscalls.sh gcc gcc-options
+# checksyscalls.sh cc cc-options
 #
 
 ignore_list() {

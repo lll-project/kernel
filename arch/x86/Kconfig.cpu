@@ -232,7 +232,7 @@ config MVIAC3_2
 	depends on X86_32
 	---help---
 	  Select this for a VIA C3 "Nehemiah". Selecting this enables usage
-	  of SSE and tells gcc to treat the CPU as a 686.
+	  of SSE and tells the compiler to treat the CPU as a 686.
 	  Note, this kernel will not boot on older (pre model 9) C3s.
 
 config MVIAC7
@@ -240,7 +240,7 @@ config MVIAC7
 	depends on X86_32
 	---help---
 	  Select this for a VIA C7.  Selecting this uses the correct cache
-	  shift and tells gcc to treat the CPU as a 686.
+	  shift and tells the compiler to treat the CPU as a 686.
 
 config MPSC
 	bool "Intel P4 / older Netburst based Xeon"
