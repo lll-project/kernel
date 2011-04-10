@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 38
-EXTRAVERSION = -rc2
+EXTRAVERSION = 2
 NAME = Flesh-Eating Bats with Fangs
 
 # *DOCUMENTATION*
@@ -231,8 +231,56 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
-HOSTCC       = gcc
-HOSTCXX      = g++
+# non-gcc friendly selection of drivers - use environment variables if they're
+# specified
+ifeq ($(HOSTCC),)
+  CC = gcc
+endif
+
+ifeq ($(HOSTCXX),)
+  CC = g++
+endif
+
+ifeq ($(CC),)
+  CC = $(CROSS_COMPILE)gcc
+endif
+
+ifeq ($(CXX),)
+  CXX = $(CROSS_COMPILE)g++
+endif
+
+ifeq ($(AS),)
+  AS = $(CROSS_COMPILE)as
+endif
+
+ifeq ($(LD),)
+  LD = $(CROSS_COMPILE)ld
+endif
+
+ifeq ($(CPP),)
+  CPP = $(CC) -E
+endif
+
+ifeq ($(AR),)
+  AR = $(CROSS_COMPILE)ar
+endif
+
+ifeq ($(NM),)
+  NM = $(CROSS_COMPILE)nm
+endif
+
+ifeq ($(STRIP),)
+  STRIP = $(CROSS_COMPILE)strip
+endif
+
+ifeq ($(OBJCOPY),)
+  OBJCOPY = $(CROSS_COMPILE)objcopy
+endif
+
+ifeq ($(OBJDUMP),)
+  OBJDUMP = $(CROSS_COMPILE)objdump
+endif
+
 HOSTCFLAGS   = -Wall -W -Wno-unused-value -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-delete-null-pointer-checks
 HOSTCXXFLAGS = -O2
 
@@ -315,16 +363,6 @@ $(srctree)/scripts/Kbuild.include: ;
 include $(srctree)/scripts/Kbuild.include
 
 # Make variables (CC, etc...)
-
-AS		= $(CROSS_COMPILE)as
-LD		= $(CROSS_COMPILE)ld
-CC		= $(CROSS_COMPILE)gcc
-CPP		= $(CC) -E
-AR		= $(CROSS_COMPILE)ar
-NM		= $(CROSS_COMPILE)nm
-STRIP		= $(CROSS_COMPILE)strip
-OBJCOPY		= $(CROSS_COMPILE)objcopy
-OBJDUMP		= $(CROSS_COMPILE)objdump
 AWK		= awk
 GENKSYMS	= scripts/genksyms/genksyms
 INSTALLKERNEL  := installkernel
