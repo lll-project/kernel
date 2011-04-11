@@ -268,11 +268,11 @@ lib = lib
 
 export prefix bindir sharedir sysconfdir
 
-ifeq ($(CC),)
+ifndef CC
   CC = $(CROSS_COMPILE)gcc
 endif
 
-ifeq ($(AR),)
+ifndef AR
   AR = $(CROSS_COMPILE)ar
 endif
 

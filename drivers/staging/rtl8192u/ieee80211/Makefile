@@ -3,14 +3,6 @@ NIC_SELECT = RTL8192U
 KVER  := $(shell uname -r)
 MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/$(NIC_SELECT)
 
-ifeq ($(CC),)
-  CC = $(CROSS_COMPILE)gcc
-endif
-
-ifeq ($(LD),)
-  LD = $(CROSS_COMPILE)ld
-endif
-
 ifneq ($(shell uname -r|cut -d. -f1,2), 2.4)
 ccflags-y := -I$(TOPDIR)/drivers/net/wireless
 ccflags-y += -O2

@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 38
-EXTRAVERSION = .2-clang
+EXTRAVERSION = -rc2
 NAME = Flesh-Eating Bats with Fangs
 
 # *DOCUMENTATION*
@@ -281,8 +281,12 @@ ifndef OBJDUMP
   OBJDUMP = $(CROSS_COMPILE)objdump
 endif
 
-HOSTCFLAGS   = -Wall -W -Wno-unused-value -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer 
-HOSTCXXFLAGS = -O2
+HOSTCFLAGS   = -std=gnu89 -Wall -Wno-unused -Wmissing-prototypes \
+               -Wstrict-prototypes -O2 -fomit-frame-pointer \
+               -Wno-missing-field-initializers
+HOSTCXXFLAGS = -std=gnu89 -Wall -Wno-unused -Wmissing-prototypes \
+               -Wstrict-prototypes -O2 -fomit-frame-pointer \
+               -Wno-missing-field-initializers
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.

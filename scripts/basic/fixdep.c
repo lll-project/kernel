@@ -140,7 +140,7 @@ static void print_cmdline(void)
 
 struct item {
 	struct item	*next;
-	unsigned int	len;
+	int	len;
 	unsigned int	hash;
 	char		name[0];
 };
