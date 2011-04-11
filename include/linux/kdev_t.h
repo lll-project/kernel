@@ -14,7 +14,7 @@
 #define format_dev_t(buffer, dev)					\
 	({								\
 		sprintf(buffer, "%u:%u", MAJOR(dev), MINOR(dev));	\
-		buffer;							\
+		(void*)buffer;							\
 	})
 
 /* acceptable for old filesystems */

@@ -176,7 +176,7 @@ struct thread_info {
 
 
 /* how to get the current stack pointer from C */
-#define current_stack_pointer ({ unsigned long esp; asm("mov %%esp, %0" : "=r"(esp)); esp; })
+#define current_stack_pointer ({ unsigned long esp; asm volatile("mov %%esp, %0" : "=r"(esp)); esp; })
 
 /* how to get the thread information struct from C */
 static inline struct thread_info *current_thread_info(void)
