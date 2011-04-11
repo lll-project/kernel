@@ -115,7 +115,7 @@ EXPORT_SYMBOL(__delay);
 
 inline void __const_udelay(unsigned long xloops)
 {
-	int d0;
+	unsigned long d0;
 
 	xloops *= 4;
 	asm("mull %%edx"

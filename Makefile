@@ -401,6 +401,7 @@ KBUILD_CFLAGS   := -Wall -W -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -Wno-unknown-warning-option -Wno-missing-field-initializers \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
+       -Wno-shift-overflow \
 		   -Wno-format-security
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=

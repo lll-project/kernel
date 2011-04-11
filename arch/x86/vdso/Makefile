@@ -37,8 +37,14 @@ $(obj)/%.so: OBJCOPYFLAGS := -S
 $(obj)/%.so: $(obj)/%.so.dbg FORCE
 	$(call if_changed,objcopy)
 
-CFL := $(PROFILING) -Xclang -mcode-model -Xclang small -fPIC -m64 \
-       $(filter -g%,$(KBUILD_CFLAGS)) $(call cc-option, -fno-stack-protector)
+CFL := -fPIC -m64 $(call cc-option, -fno-stack-protector)
+
+# TODO: fix on the clang side
+ifeq ($(call cc-option, -Xclang),)
+  CFL += -Xclang -mcode-model -Xclang small $(filter -g%,$(KBUILD_CFLAGS))
+else
+  CFL += -mcmodel=small -fasynchronous-unwind-tables
+endif
 
 $(vobjs): KBUILD_CFLAGS += $(CFL)
 

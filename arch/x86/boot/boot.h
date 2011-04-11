@@ -30,6 +30,8 @@
 #include <asm/processor-flags.h>
 #include "ctype.h"
 
+#define asmregparm __attribute__((regparm(3)))
+
 #ifdef CONFIG_X86_32
 #define asmlinkage __attribute__((regparm(0)))
 #else
@@ -231,12 +233,12 @@ static inline bool heap_free(size_t n)
 
 /* copy.S */
 
-void copy_to_fs(addr_t dst, void *src, size_t len);
-void *copy_from_fs(void *dst, addr_t src, size_t len);
-void copy_to_gs(addr_t dst, void *src, size_t len);
-void *copy_from_gs(void *dst, addr_t src, size_t len);
+void asmregparm copy_to_fs(addr_t dst, void *src, size_t len);
+void * asmregparm copy_from_fs(void *dst, addr_t src, size_t len);
+void asmregparm copy_to_gs(addr_t dst, void *src, size_t len);
+void * asmregparm copy_from_gs(void *dst, addr_t src, size_t len);
 
-static inline void *memcpy(void *d, const void *s, size_t l)
+static inline void * asmregparm memcpy(void *d, const void *s, size_t l)
 {
 	int d0, d1, d2;
 	asm volatile("rep ; addr32 movsb\n\t"
@@ -246,7 +248,7 @@ static inline void *memcpy(void *d, const void *s, size_t l)
 	return d;
 }
 
-static inline void *memset(void *d, char c, size_t l)
+static inline void * asmregparm memset(void *d, char c, size_t l)
 {
 	int d0, d1;
 	asm volatile("rep ; addr32 stosb\n\t"
@@ -303,7 +305,7 @@ struct biosregs {
 		};
 	};
 };
-void intcall(u8 int_no, const struct biosregs *ireg, struct biosregs *oreg);
+void asmregparm intcall(u8 int_no, const struct biosregs *ireg, struct biosregs *oreg);
 
 /* cmdline.c */
 int __cmdline_find_option(u32 cmdline_ptr, const char *option, char *buffer, int bufsize);
@@ -349,7 +351,7 @@ int detect_memory(void);
 void __attribute__((noreturn)) go_to_protected_mode(void);
 
 /* pmjump.S */
-void __attribute__((noreturn))
+void asmregparm __attribute__((noreturn))
 	protected_mode_jump(u32 entrypoint, u32 bootparams);
 
 /* printf.c */
@@ -368,8 +370,8 @@ unsigned int atou(const char *s);
 unsigned long long simple_strtoull(const char *cp, char **endp, unsigned int base);
 
 /* tty.c */
-void puts(const char *);
-void putchar(int);
+void asmregparm puts(const char *);
+void asmregparm putchar(int);
 int getchar(void);
 void kbd_flush(void);
 int getchar_timeout(void);
