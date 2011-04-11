@@ -645,7 +645,7 @@ KBUILD_CFLAGS += $(call cc-option,-Wno-pointer-sign,)
 KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
 
 # conserve stack if available
-KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
+#KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
 
 # check for 'asm goto'
 ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/cc-goto.sh $(CC)), y)
