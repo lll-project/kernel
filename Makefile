@@ -233,51 +233,51 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 # non-gcc friendly selection of drivers - use environment variables if they're
 # specified
-ifeq ($(HOSTCC),)
-  CC = gcc
+ifndef HOSTCC
+  HOSTCC = gcc
 endif
 
-ifeq ($(HOSTCXX),)
-  CC = g++
+ifndef HOSTCXX
+  HOSTCXX = g++
 endif
 
-ifeq ($(CC),)
+ifndef CC
   CC = $(CROSS_COMPILE)gcc
 endif
 
-ifeq ($(CXX),)
+ifndef CXX
   CXX = $(CROSS_COMPILE)g++
 endif
 
-ifeq ($(AS),)
+ifndef AS
   AS = $(CROSS_COMPILE)as
 endif
 
-ifeq ($(LD),)
+ifndef LD
   LD = $(CROSS_COMPILE)ld
 endif
 
-ifeq ($(CPP),)
+ifndef CPP
   CPP = $(CC) -E
 endif
 
-ifeq ($(AR),)
+ifndef AR
   AR = $(CROSS_COMPILE)ar
 endif
 
-ifeq ($(NM),)
+ifndef NM
   NM = $(CROSS_COMPILE)nm
 endif
 
-ifeq ($(STRIP),)
+ifndef STRIP
   STRIP = $(CROSS_COMPILE)strip
 endif
 
-ifeq ($(OBJCOPY),)
+ifndef OBJCOPY
   OBJCOPY = $(CROSS_COMPILE)objcopy
 endif
 
-ifeq ($(OBJDUMP),)
+ifndef OBJDUMP
   OBJDUMP = $(CROSS_COMPILE)objdump
 endif
 
