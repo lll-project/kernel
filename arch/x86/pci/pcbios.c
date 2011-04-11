@@ -88,7 +88,6 @@ static struct {
 static unsigned long bios32_service(unsigned long service)
 {
 	unsigned char return_code;	/* %al */
-	unsigned long return_code_compat;	/* %eax */
 	unsigned long address;		/* %ebx */
 	unsigned long length;		/* %ecx */
 	unsigned long entry;		/* %edx */
@@ -96,14 +95,13 @@ static unsigned long bios32_service(unsigned long service)
 
 	local_irq_save(flags);
 	__asm__("lcall *(%%edi); cld"
-		: "=a" (return_code_compat),
+		: "=a" (return_code),
 		  "=b" (address),
 		  "=c" (length),
 		  "=d" (entry)
 		: "0" (service),
 		  "1" (0),
 		  "D" (&bios32_indirect));
-  return_code = return_code_compt
 	local_irq_restore(flags);
 
 	switch (return_code) {

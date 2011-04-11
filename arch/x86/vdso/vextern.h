@@ -1,7 +1,7 @@
 #ifndef VEXTERN
 #include <asm/vsyscall.h>
 #define VEXTERN(x) \
-	typeof(x) *vdso_ ## x __attribute__((weak, visibility("hidden")));
+	extern typeof(x) *vdso_ ## x __attribute__((visibility("hidden")));
 #endif
 
 #define VMAGIC 0xfeedbabeabcdefabUL
