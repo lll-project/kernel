@@ -181,12 +181,7 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 # during compilation. Only gcc and related bin-utils executables
 # are prefixed with $(CROSS_COMPILE).
 # CROSS_COMPILE can be set on the command line
-# make CROSS_COMPILE=ia64-linux-
-# Alternatively CROSS_COMPILE can be set in the environment.
-# A third alternative is to store a setting in .config so that plain
-# "make" in the configured kernel build directory always uses that.
-# Default value for CROSS_COMPILE is not to prefix executables
-# Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
+# Cross compile prefix, e.g. CROSS_COMPILE=ia64-linux-
 export KBUILD_BUILDHOST := $(SUBARCH)
 ARCH		?= $(SUBARCH)
 CROSS_COMPILE	?= $(CONFIG_CROSS_COMPILE:"%"=%)
@@ -231,64 +226,30 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
-# non-gcc friendly selection of drivers - use environment variables if they're
-# specified
-ifndef HOSTCC
-  HOSTCC = gcc
-endif
+# We need some generic definitions (do not try to remake the file).
+$(srctree)/scripts/Kbuild.include: ;
+include $(srctree)/scripts/Kbuild.include
 
-ifndef HOSTCXX
-  HOSTCXX = g++
-endif
+# compiler configuration
+include $(srctree)/Makefile.config
 
-ifndef CC
-  CC = $(CROSS_COMPILE)gcc
-endif
+# deprecated flag names
+CFLAGS_MODULE  :=
+AFLAGS_MODULE  :=
+LDFLAGS_MODULE :=
 
-ifndef CXX
-  CXX = $(CROSS_COMPILE)g++
-endif
+CFLAGS_KERNEL	:=
+AFLAGS_KERNEL	:=
 
-ifndef AS
-  AS = $(CROSS_COMPILE)as
-endif
+CFLAGS_GCOV	:= $(KBUILD_GCOV_FLAGS) 
 
-ifndef LD
-  LD = $(CROSS_COMPILE)ld
-endif
+NOSTDINC_FLAGS := $(KBUILD_NOSTDINC_FLAGS) 
 
-ifndef CPP
-  CPP = $(CC) -E
-endif
+CHECKFLAGS := -D__linux__ -D__STDC__ -D__unix__ \
+              $(call cc-option, -Wbitwise) \
+              $(call cc-option, -Wno-return-void) \
+              $(CF)
 
-ifndef AR
-  AR = $(CROSS_COMPILE)ar
-endif
-
-ifndef NM
-  NM = $(CROSS_COMPILE)nm
-endif
-
-ifndef STRIP
-  STRIP = $(CROSS_COMPILE)strip
-endif
-
-ifndef OBJCOPY
-  OBJCOPY = $(CROSS_COMPILE)objcopy
-endif
-
-ifndef OBJDUMP
-  OBJDUMP = $(CROSS_COMPILE)objdump
-endif
-
-HOSTCFLAGS   = -std=gnu89 -Wall -Wno-unused -Wno-unused-value \
-               -Wno-unused-parameter -Wno-unused-variable -Wmissing-prototypes \
-               -Wstrict-prototypes -O2 -fomit-frame-pointer \
-               -Wno-missing-field-initializers
-HOSTCXXFLAGS = -std=gnu89 -Wall -Wno-unused -Wno-unused-value \
-               -Wno-unused-parameter -Wno-unused-variable -Wmissing-prototypes \
-               -Wstrict-prototypes -O2 -fomit-frame-pointer \
-               -Wno-missing-field-initializers
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -360,32 +321,8 @@ endif
 
 export quiet Q KBUILD_VERBOSE
 
-
 # Look for make include files relative to root of kernel src
 MAKEFLAGS += --include-dir=$(srctree)
-
-# We need some generic definitions (do not try to remake the file).
-$(srctree)/scripts/Kbuild.include: ;
-include $(srctree)/scripts/Kbuild.include
-
-# Make variables (CC, etc...)
-AWK		= awk
-GENKSYMS	= scripts/genksyms/genksyms
-INSTALLKERNEL  := installkernel
-DEPMOD		= /sbin/depmod
-KALLSYMS	= scripts/kallsyms
-PERL		= perl
-CHECK		= sparse
-
-CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
-		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   =
-AFLAGS_MODULE   =
-LDFLAGS_MODULE  =
-CFLAGS_KERNEL	=
-AFLAGS_KERNEL	=
-CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
-
 
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
@@ -393,21 +330,6 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include -Iinclude \
                    $(if $(KBUILD_SRC), -I$(srctree)/include) \
                    -include include/generated/autoconf.h
 
-KBUILD_CPPFLAGS := -D__KERNEL__
-
-KBUILD_CFLAGS   := -Wall -W -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -Wno-unused -Wno-unused-value -Wno-unused-variable \
-       -Wno-unused-parameter -Wno-format -Wno-uninitialized -mno-sse \
-		   -Wno-unknown-warning-option -Wno-missing-field-initializers \
-		   -fno-strict-aliasing -fno-common \
-		   -Werror-implicit-function-declaration \
-		   -Wno-format-security
-KBUILD_AFLAGS_KERNEL :=
-KBUILD_CFLAGS_KERNEL :=
-KBUILD_AFLAGS   := -D__ASSEMBLY__ -no-integrated-as
-KBUILD_AFLAGS_MODULE  := -DMODULE
-KBUILD_CFLAGS_MODULE  := -DMODULE
-KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
 
 # Read KERNELRELEASE from include/config/kernel.release (if it exists)
 KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
@@ -585,74 +507,80 @@ endif # $(dot-config)
 all: vmlinux
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
-KBUILD_CFLAGS	+= -Os
+  ifndef KBUILD_OPTIMIZE_SIZE_FLAGS
+    KBUILD_CFLAGS	+= $(call cc-option, -Os)
+  else
+    KBUILD_CFLAGS	+= $(KBUILD_OPTIMIZE_SIZE_FLAGS)
+  endif
 else
-KBUILD_CFLAGS	+= -O2
+  ifndef KBUILD_OPTIMIZE_SPEED_FLAGS
+    KBUILD_CFLAGS	+= $(call cc-option, -O2)
+  else
+    KBUILD_CFLAGS	+= $(KBUILD_OPTIMIZE_SPEED_FLAGS)
+  endif
 endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
 
 ifneq ($(CONFIG_FRAME_WARN),0)
-KBUILD_CFLAGS += $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
+  KBUILD_CFLAGS += $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
 endif
 
 # Force gcc to behave correct even for buggy distributions
 ifndef CONFIG_CC_STACKPROTECTOR
-KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
+  KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
 endif
 
 ifdef CONFIG_FRAME_POINTER
-KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+  KBUILD_CFLAGS	+= $(call cc-option, -fno-omit-frame-pointer) \
+                   $(call cc-option, -fno-optimize-sibling-calls)
 else
 # Some targets (ARM with Thumb2, for example), can't be built with frame
 # pointers.  For those, we don't have FUNCTION_TRACER automatically
 # select FRAME_POINTER.  However, FUNCTION_TRACER adds -pg, and this is
 # incompatible with -fomit-frame-pointer with current GCC, so we don't use
 # -fomit-frame-pointer with FUNCTION_TRACER.
-ifndef CONFIG_FUNCTION_TRACER
-KBUILD_CFLAGS	+= -fomit-frame-pointer
-endif
+  ifndef CONFIG_FUNCTION_TRACER
+    KBUILD_CFLAGS	+= $(call cc-option, -fomit-frame-pointer)
+  endif
 endif
 
 ifdef CONFIG_DEBUG_INFO
-KBUILD_CFLAGS	+= -g
-KBUILD_AFLAGS	+= -gdwarf-2
+  ifndef KBUILD_DEBUG_FLAGS
+    KBUILD_CFLAGS += $(call cc-option, -g)
+    KBUILD_CFLAGS += $(call cc-option, -g)
+  else
+    KBUILD_CFLAGS += $(KBUILD_DEBUG_FLAGS)
+    KBUILD_CFLAGS += $(KBUILD_DEBUG_FLAGS)
+  endif
 endif
 
 ifdef CONFIG_DEBUG_INFO_REDUCED
-KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly)
+  KBUILD_CFLAGS += $(call cc-option, -femit-struct-debug-baseonly)
 endif
 
 ifdef CONFIG_FUNCTION_TRACER
-KBUILD_CFLAGS	+= -pg
-ifdef CONFIG_DYNAMIC_FTRACE
-	ifdef CONFIG_HAVE_C_RECORDMCOUNT
-		BUILD_C_RECORDMCOUNT := y
-		export BUILD_C_RECORDMCOUNT
-	endif
-endif
+  ifndef KBUILD_PROFILING_FLAGS
+    KBUILD_CFLAGS	+= $(call cc-option, -pg)
+  else
+    KBUILD_CFLAGS += $(KBUILD_PROFILING_FLAGS)
+  endif
+
+  ifdef CONFIG_DYNAMIC_FTRACE
+    ifdef CONFIG_HAVE_C_RECORDMCOUNT
+      BUILD_C_RECORDMCOUNT := y
+      export BUILD_C_RECORDMCOUNT
+    endif
+  endif
 endif
 
 # We trigger additional mismatches with less inlining
 ifdef CONFIG_DEBUG_SECTION_MISMATCH
-KBUILD_CFLAGS += $(call cc-option, -fno-inline-functions-called-once)
+  KBUILD_CFLAGS += $(call cc-option, -fno-inline-functions-called-once)
 endif
 
 # arch Makefile may override CC so keep this after arch Makefile is included
-NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
-CHECKFLAGS     += $(NOSTDINC_FLAGS)
-
-# warn about C99 declaration after statement
-KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
-
-# disable pointer signed / unsigned warnings in gcc 4.0
-KBUILD_CFLAGS += $(call cc-option,-Wno-pointer-sign,)
-
-# disable invalid "can't wrap" optimizations for signed / pointers
-KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
-
-# conserve stack if available
-#KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
+CHECKFLAGS += $(NOSTDINC_FLAGS)
 
 # check for 'asm goto'
 ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/cc-goto.sh $(CC)), y)
