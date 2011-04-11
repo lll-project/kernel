@@ -141,7 +141,7 @@ module_param(qhimark, int, 0);
 module_param(qlowmark, int, 0);
 
 #ifdef CONFIG_RCU_CPU_STALL_DETECTOR
-int rcu_cpu_stall_suppress __read_mostly = RCU_CPU_STALL_SUPPRESS_INIT;
+int __read_mostly rcu_cpu_stall_suppress = RCU_CPU_STALL_SUPPRESS_INIT;
 module_param(rcu_cpu_stall_suppress, int, 0644);
 #endif /* #ifdef CONFIG_RCU_CPU_STALL_DETECTOR */
 
@@ -451,8 +451,6 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
 #endif /* #else #ifdef CONFIG_NO_HZ */
 
 #ifdef CONFIG_RCU_CPU_STALL_DETECTOR
-
-int rcu_cpu_stall_suppress __read_mostly;
 
 static void record_gp_stall_check_time(struct rcu_state *rsp)
 {

@@ -84,9 +84,9 @@ void __init x86_64_start_kernel(char * real_mode_data)
 
 	for (i = 0; i < NUM_EXCEPTION_VECTORS; i++) {
 #ifdef CONFIG_EARLY_PRINTK
-		set_intr_gate(i, &early_idt_handlers[i]);
+		set_intr_gate(i, (void*) &early_idt_handlers[i]);
 #else
-		set_intr_gate(i, early_idt_handler);
+		set_intr_gate(i, (void*) early_idt_handler);
 #endif
 	}
 	load_idt((const struct desc_ptr *)&idt_descr);

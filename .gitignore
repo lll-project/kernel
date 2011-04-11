@@ -74,6 +74,7 @@ GRTAGS
 GSYMS
 GTAGS
 
-*.orig
-*~
-\#*#
+#*.orig
+#*~
+#\#*#
+
