@@ -179,9 +179,9 @@ static struct symfile * filename_exist(char * filename)
  * Files are separated by tabs.
  */
 static void adddep(char * file)		   { printf("\t%s", file); }
-static void adddep2(char * file, char * line)     { line = line; adddep(file); }
-static void noaction(char * line)		   { line = line; }
-static void noaction2(char * file, char * line)   { file = file; line = line; }
+static void adddep2(char * file, char * line)     { adddep(file); }
+static void noaction(char * line)		   { }
+static void noaction2(char * file, char * line)   { }
 
 /* Echo the line without further action */
 static void printline(char * line)               { printf("%s", line); }
@@ -353,11 +353,11 @@ static void find_all_symbols(char *filename)
 {
 	char *vec[4]; /* kerneldoc -list file NULL */
 	pid_t pid;
-	int ret, i, count, start;
+	int ret, count, start;
 	char real_filename[PATH_MAX + 1];
 	int pipefd[2];
 	char *data, *str;
-	size_t data_len = 0;
+	size_t data_len = 0, i = 0;
 
 	vec[0] = KERNELDOC;
 	vec[1] = LIST;

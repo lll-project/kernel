@@ -62,7 +62,7 @@ ifeq ($(CONFIG_JUMP_LABEL), y)
 ADD_ACCUMULATE_OUTGOING_ARGS := y
 endif
 
-cflags-$(ADD_ACCUMULATE_OUTGOING_ARGS) += $(call cc-option,-maccumulate-outgoing-args)
+#cflags-$(ADD_ACCUMULATE_OUTGOING_ARGS) += $(call cc-option,-maccumulate-outgoing-args)
 
 # Bug fix for binutils: this option is required in order to keep
 # binutils from generating NOPL instructions against our will.

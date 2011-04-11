@@ -69,7 +69,7 @@ else
 
         # this works around some issues with generating unwind tables in older gccs
         # newer gccs do it by default
-        KBUILD_CFLAGS += -maccumulate-outgoing-args
+#        KBUILD_CFLAGS += -maccumulate-outgoing-args
 endif
 
 ifdef CONFIG_CC_STACKPROTECTOR

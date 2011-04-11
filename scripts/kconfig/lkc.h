@@ -130,7 +130,7 @@ struct gstr {
 	* when max_width is not zero long lines in string s (if any) get
 	* wrapped not to exceed the max_width value
 	*/
-	int max_width;
+	unsigned max_width;
 };
 struct gstr str_new(void);
 struct gstr str_assign(const char *s);

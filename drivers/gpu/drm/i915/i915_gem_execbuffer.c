@@ -388,6 +388,10 @@ i915_gem_execbuffer_relocate_entry(struct drm_i915_gem_object *obj,
 		uint32_t __iomem *reloc_entry;
 		void __iomem *reloc_page;
 
+		/* We can't wait for rendering with pagefaults disabled */
+		if (obj->active && in_atomic())
+			return -EFAULT;
+
 		ret = i915_gem_object_set_to_gtt_domain(obj, 1);
 		if (ret)
 			return ret;
@@ -461,15 +465,24 @@ i915_gem_execbuffer_relocate(struct drm_device *dev,
 			     struct list_head *objects)
 {
 	struct drm_i915_gem_object *obj;
-	int ret;
+	int ret = 0;
 
+	/* This is the fast path and we cannot handle a pagefault whilst
+	 * holding the struct mutex lest the user pass in the relocations
+	 * contained within a mmaped bo. For in such a case we, the page
+	 * fault handler would call i915_gem_fault() and we would try to
+	 * acquire the struct mutex again. Obviously this is bad and so
+	 * lockdep complains vehemently.
+	 */
+	pagefault_disable();
 	list_for_each_entry(obj, objects, exec_list) {
 		ret = i915_gem_execbuffer_relocate_object(obj, eb);
 		if (ret)
-			return ret;
+			break;
 	}
+	pagefault_enable();
 
-	return 0;
+	return ret;
 }
 
 static int
@@ -772,8 +785,8 @@ i915_gem_execbuffer_sync_rings(struct drm_i915_gem_object *obj,
 	if (from == NULL || to == from)
 		return 0;
 
-	/* XXX gpu semaphores are currently causing hard hangs on SNB mobile */
-	if (INTEL_INFO(obj->base.dev)->gen < 6 || IS_MOBILE(obj->base.dev))
+	/* XXX gpu semaphores are implicated in various hard hangs on SNB */
+	if (INTEL_INFO(obj->base.dev)->gen < 6 || !i915_semaphores)
 		return i915_gem_object_wait_rendering(obj, true);
 
 	idx = intel_ring_sync_index(from, to);
@@ -1175,7 +1188,7 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 		goto err;
 
 	seqno = i915_gem_next_request_seqno(dev, ring);
-	for (i = 0; i < I915_NUM_RINGS-1; i++) {
+	for (i = 0; i < ARRAY_SIZE(ring->sync_seqno); i++) {
 		if (seqno < ring->sync_seqno[i]) {
 			/* The GPU can not handle its semaphore value wrapping,
 			 * so every billion or so execbuffers, we need to stall

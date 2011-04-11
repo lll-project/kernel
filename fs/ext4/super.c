@@ -75,8 +75,10 @@ static void ext4_write_super(struct super_block *sb);
 static int ext4_freeze(struct super_block *sb);
 static struct dentry *ext4_mount(struct file_system_type *fs_type, int flags,
 		       const char *dev_name, void *data);
+static int ext4_feature_set_ok(struct super_block *sb, int readonly);
 static void ext4_destroy_lazyinit_thread(void);
 static void ext4_unregister_li_request(struct super_block *sb);
+static void ext4_clear_request_list(void);
 
 #if !defined(CONFIG_EXT3_FS) && !defined(CONFIG_EXT3_FS_MODULE) && defined(CONFIG_EXT4_USE_FOR_EXT23)
 static struct file_system_type ext3_fs_type = {
@@ -832,6 +834,7 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
 	ei->i_sync_tid = 0;
 	ei->i_datasync_tid = 0;
 	atomic_set(&ei->i_ioend_count, 0);
+	atomic_set(&ei->i_aiodio_unwritten, 0);
 
 	return &ei->vfs_inode;
 }
@@ -2118,6 +2121,13 @@ static void ext4_orphan_cleanup(struct super_block *sb,
 		return;
 	}
 
+	/* Check if feature set would not allow a r/w mount */
+	if (!ext4_feature_set_ok(sb, 0)) {
+		ext4_msg(sb, KERN_INFO, "Skipping orphan cleanup due to "
+			 "unknown ROCOMPAT features");
+		return;
+	}
+
 	if (EXT4_SB(sb)->s_mount_state & EXT4_ERROR_FS) {
 		if (es->s_last_orphan)
 			jbd_debug(1, "Errors on filesystem, "
@@ -2716,6 +2726,8 @@ static void ext4_unregister_li_request(struct super_block *sb)
 	mutex_unlock(&ext4_li_info->li_list_mtx);
 }
 
+static struct task_struct *ext4_lazyinit_task;
+
 /*
  * This is the function where ext4lazyinit thread lives. It walks
  * through the request list searching for next scheduled filesystem.
@@ -2784,6 +2796,10 @@ cont_thread:
 		if (time_before(jiffies, next_wakeup))
 			schedule();
 		finish_wait(&eli->li_wait_daemon, &wait);
+		if (kthread_should_stop()) {
+			ext4_clear_request_list();
+			goto exit_thread;
+		}
 	}
 
 exit_thread:
@@ -2808,6 +2824,7 @@ exit_thread:
 	wake_up(&eli->li_wait_task);
 
 	kfree(ext4_li_info);
+	ext4_lazyinit_task = NULL;
 	ext4_li_info = NULL;
 	mutex_unlock(&ext4_li_mtx);
 
@@ -2830,11 +2847,10 @@ static void ext4_clear_request_list(void)
 
 static int ext4_run_lazyinit_thread(void)
 {
-	struct task_struct *t;
-
-	t = kthread_run(ext4_lazyinit_thread, ext4_li_info, "ext4lazyinit");
-	if (IS_ERR(t)) {
-		int err = PTR_ERR(t);
+	ext4_lazyinit_task = kthread_run(ext4_lazyinit_thread,
+					 ext4_li_info, "ext4lazyinit");
+	if (IS_ERR(ext4_lazyinit_task)) {
+		int err = PTR_ERR(ext4_lazyinit_task);
 		ext4_clear_request_list();
 		del_timer_sync(&ext4_li_info->li_timer);
 		kfree(ext4_li_info);
@@ -2985,16 +3001,10 @@ static void ext4_destroy_lazyinit_thread(void)
 	 * If thread exited earlier
 	 * there's nothing to be done.
 	 */
-	if (!ext4_li_info)
+	if (!ext4_li_info || !ext4_lazyinit_task)
 		return;
 
-	ext4_clear_request_list();
-
-	while (ext4_li_info->li_task) {
-		wake_up(&ext4_li_info->li_wait_daemon);
-		wait_event(ext4_li_info->li_wait_task,
-			   ext4_li_info->li_task == NULL);
-	}
+	kthread_stop(ext4_lazyinit_task);
 }
 
 static int ext4_fill_super(struct super_block *sb, void *data, int silent)
@@ -4768,7 +4778,7 @@ static struct file_system_type ext4_fs_type = {
 	.fs_flags	= FS_REQUIRES_DEV,
 };
 
-int __init ext4_init_feat_adverts(void)
+static int __init ext4_init_feat_adverts(void)
 {
 	struct ext4_features *ef;
 	int ret = -ENOMEM;
@@ -4792,23 +4802,44 @@ out:
 	return ret;
 }
 
+static void ext4_exit_feat_adverts(void)
+{
+	kobject_put(&ext4_feat->f_kobj);
+	wait_for_completion(&ext4_feat->f_kobj_unregister);
+	kfree(ext4_feat);
+}
+
+/* Shared across all ext4 file systems */
+wait_queue_head_t ext4__ioend_wq[EXT4_WQ_HASH_SZ];
+struct mutex ext4__aio_mutex[EXT4_WQ_HASH_SZ];
+
 static int __init ext4_init_fs(void)
 {
-	int err;
+	int i, err;
 
 	ext4_check_flag_values();
+
+	for (i = 0; i < EXT4_WQ_HASH_SZ; i++) {
+		mutex_init(&ext4__aio_mutex[i]);
+		init_waitqueue_head(&ext4__ioend_wq[i]);
+	}
+
 	err = ext4_init_pageio();
 	if (err)
 		return err;
 	err = ext4_init_system_zone();
 	if (err)
-		goto out5;
+		goto out7;
 	ext4_kset = kset_create_and_add("ext4", NULL, fs_kobj);
 	if (!ext4_kset)
-		goto out4;
+		goto out6;
 	ext4_proc_root = proc_mkdir("fs/ext4", NULL);
+	if (!ext4_proc_root)
+		goto out5;
 
 	err = ext4_init_feat_adverts();
+	if (err)
+		goto out4;
 
 	err = ext4_init_mballoc();
 	if (err)
@@ -4838,12 +4869,14 @@ out1:
 out2:
 	ext4_exit_mballoc();
 out3:
-	kfree(ext4_feat);
-	remove_proc_entry("fs/ext4", NULL);
-	kset_unregister(ext4_kset);
+	ext4_exit_feat_adverts();
 out4:
-	ext4_exit_system_zone();
+	remove_proc_entry("fs/ext4", NULL);
 out5:
+	kset_unregister(ext4_kset);
+out6:
+	ext4_exit_system_zone();
+out7:
 	ext4_exit_pageio();
 	return err;
 }
@@ -4857,6 +4890,7 @@ static void __exit ext4_exit_fs(void)
 	destroy_inodecache();
 	ext4_exit_xattr();
 	ext4_exit_mballoc();
+	ext4_exit_feat_adverts();
 	remove_proc_entry("fs/ext4", NULL);
 	kset_unregister(ext4_kset);
 	ext4_exit_system_zone();

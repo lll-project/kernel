@@ -1940,7 +1940,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
 
 	error = -EINVAL;
 	if (S_ISBLK(inode->i_mode)) {
-		bdev = I_BDEV(inode);
+		bdev = bdgrab(I_BDEV(inode));
 		error = blkdev_get(bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL,
 				   sys_swapon);
 		if (error < 0) {
@@ -2149,8 +2149,13 @@ bad_swap_2:
 	p->flags = 0;
 	spin_unlock(&swap_lock);
 	vfree(swap_map);
-	if (swap_file)
+	if (swap_file) {
+		if (did_down) {
+			mutex_unlock(&inode->i_mutex);
+			did_down = 0;
+		}
 		filp_close(swap_file, NULL);
+	}
 out:
 	if (page && !IS_ERR(page)) {
 		kunmap(page);

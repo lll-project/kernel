@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 38
-EXTRAVERSION = .2-clang
+EXTRAVERSION = .2
 NAME = Flesh-Eating Bats with Fangs
 
 # *DOCUMENTATION*
@@ -233,56 +233,62 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 # non-gcc friendly selection of drivers - use environment variables if they're
 # specified
-ifeq ($(HOSTCC),)
-  CC = gcc
+ifndef HOSTCC
+  HOSTCC = gcc
 endif
 
-ifeq ($(HOSTCXX),)
-  CC = g++
+ifndef HOSTCXX
+  HOSTCXX = g++
 endif
 
-ifeq ($(CC),)
+ifndef CC
   CC = $(CROSS_COMPILE)gcc
 endif
 
-ifeq ($(CXX),)
+ifndef CXX
   CXX = $(CROSS_COMPILE)g++
 endif
 
-ifeq ($(AS),)
+ifndef AS
   AS = $(CROSS_COMPILE)as
 endif
 
-ifeq ($(LD),)
+ifndef LD
   LD = $(CROSS_COMPILE)ld
 endif
 
-ifeq ($(CPP),)
+ifndef CPP
   CPP = $(CC) -E
 endif
 
-ifeq ($(AR),)
+ifndef AR
   AR = $(CROSS_COMPILE)ar
 endif
 
-ifeq ($(NM),)
+ifndef NM
   NM = $(CROSS_COMPILE)nm
 endif
 
-ifeq ($(STRIP),)
+ifndef STRIP
   STRIP = $(CROSS_COMPILE)strip
 endif
 
-ifeq ($(OBJCOPY),)
+ifndef OBJCOPY
   OBJCOPY = $(CROSS_COMPILE)objcopy
 endif
 
-ifeq ($(OBJDUMP),)
+ifndef OBJDUMP
   OBJDUMP = $(CROSS_COMPILE)objdump
 endif
 
-HOSTCFLAGS   = -Wall -W -Wno-unused-value -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-delete-null-pointer-checks
-HOSTCXXFLAGS = -O2
+HOSTCFLAGS   = -std=gnu89 -Wall -Wno-unused -Wno-unused-value \
+               -Wno-unused-parameter -Wno-unused-variable -Wmissing-prototypes \
+               -Wstrict-prototypes -O2 -fomit-frame-pointer \
+               -Wno-missing-field-initializers
+HOSTCXXFLAGS = -std=gnu89 -Wall -Wno-unused -Wno-unused-value \
+               -Wno-unused-parameter -Wno-unused-variable -Wmissing-prototypes \
+               -Wstrict-prototypes -O2 -fomit-frame-pointer \
+               -Wno-missing-field-initializers
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -389,13 +395,13 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include -Iinclude \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -W -Wundef -Wstrict-prototypes -Wno-trigraphs -Qunused-arguments \
-		   -Wno-unused-value -Wno-unused-parameter -Wno-format -mno-sse \
+KBUILD_CFLAGS   := -Wall -W -Wundef -Wstrict-prototypes -Wno-trigraphs \
+		   -Wno-unused -Wno-unused-value -Wno-unused-variable \
+       -Wno-unused-parameter -Wno-format -Wno-uninitialized -mno-sse \
 		   -Wno-unknown-warning-option -Wno-missing-field-initializers \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
-		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks
+		   -Wno-format-security
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__ -no-integrated-as
@@ -646,7 +652,7 @@ KBUILD_CFLAGS += $(call cc-option,-Wno-pointer-sign,)
 KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
 
 # conserve stack if available
-KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
+#KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
 
 # check for 'asm goto'
 ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/cc-goto.sh $(CC)), y)

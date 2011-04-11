@@ -3,24 +3,16 @@
 # from userspace.
 #
 
-ifeq ($(CC),)
+ifndef CC
   CC = $(CROSS_COMPILE)gcc
 endif
 
-ifeq ($(LD),)
-  LD = $(CROSS_COMPILE)ld
-endif
-
-ifeq ($(AR),)
+ifndef AR
   AR = $(CROSS_COMPILE)ar
 endif
 
-ifeq ($(RANLIB),)
+ifndef RANLIB
   RANLIB = ranlib 
-endif
-
-ifeq ($(NM),)
-  NM = $(CROSS_COMPILE)nm
 endif
 
 OPTFLAGS = -O2			# Adjust as desired

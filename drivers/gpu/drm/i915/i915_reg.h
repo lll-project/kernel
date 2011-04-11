@@ -174,7 +174,9 @@
  *   address/value pairs. Don't overdue it, though, x <= 2^4 must hold!
  */
 #define MI_LOAD_REGISTER_IMM(x)	MI_INSTR(0x22, 2*x-1)
-#define MI_FLUSH_DW		MI_INSTR(0x26, 2) /* for GEN6 */
+#define MI_FLUSH_DW		MI_INSTR(0x26, 1) /* for GEN6 */
+#define   MI_INVALIDATE_TLB	(1<<18)
+#define   MI_INVALIDATE_BSD	(1<<7)
 #define MI_BATCH_BUFFER		MI_INSTR(0x30, 1)
 #define   MI_BATCH_NON_SECURE	(1)
 #define   MI_BATCH_NON_SECURE_I965 (1<<8)
@@ -403,9 +405,12 @@
 #define   I915_ERROR_INSTRUCTION			(1<<0)
 #define INSTPM	        0x020c0
 #define   INSTPM_SELF_EN (1<<12) /* 915GM only */
+#define   INSTPM_AGPBUSY_DIS (1<<11) /* gen3: when disabled, pending interrupts
+					will not assert AGPBUSY# and will only
+					be delivered when out of C3. */
 #define ACTHD	        0x020c8
 #define FW_BLC		0x020d8
-#define FW_BLC2	 	0x020dc
+#define FW_BLC2		0x020dc
 #define FW_BLC_SELF	0x020e0 /* 915+ only */
 #define   FW_BLC_SELF_EN_MASK      (1<<31)
 #define   FW_BLC_SELF_FIFO_MASK    (1<<16) /* 945 only */
@@ -512,6 +517,10 @@
 #define   GEN6_BLITTER_COMMAND_PARSER_MASTER_ERROR	(1 << 25)
 #define   GEN6_BLITTER_SYNC_STATUS			(1 << 24)
 #define   GEN6_BLITTER_USER_INTERRUPT			(1 << 22)
+
+#define GEN6_BLITTER_ECOSKPD	0x221d0
+#define   GEN6_BLITTER_LOCK_SHIFT			16
+#define   GEN6_BLITTER_FBC_NOTIFY			(1<<3)
 
 #define GEN6_BSD_SLEEP_PSMI_CONTROL	0x12050
 #define   GEN6_BSD_SLEEP_PSMI_CONTROL_RC_ILDL_MESSAGE_MODIFY_MASK	(1 << 16)
@@ -2626,6 +2635,8 @@
 #define DISPLAY_PORT_PLL_BIOS_2         0x46014
 
 #define PCH_DSPCLK_GATE_D	0x42020
+# define DPFCUNIT_CLOCK_GATE_DISABLE		(1 << 9)
+# define DPFCRUNIT_CLOCK_GATE_DISABLE		(1 << 8)
 # define DPFDUNIT_CLOCK_GATE_DISABLE		(1 << 7)
 # define DPARBUNIT_CLOCK_GATE_DISABLE		(1 << 5)
 
@@ -3262,6 +3273,8 @@
 
 #define  FORCEWAKE				0xA18C
 #define  FORCEWAKE_ACK				0x130090
+
+#define  GT_FIFO_FREE_ENTRIES			0x120008
 
 #define GEN6_RPNSWREQ				0xA008
 #define   GEN6_TURBO_DISABLE			(1<<31)

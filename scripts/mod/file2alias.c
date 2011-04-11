@@ -45,7 +45,7 @@ do {                                                            \
                 sprintf(str + strlen(str),                      \
                         sizeof(field) == 1 ? "%02X" :           \
                         sizeof(field) == 2 ? "%04X" :           \
-                        sizeof(field) == 4 ? "%08X" : "",       \
+                        sizeof(field) == 4 ? "%08X" : "%X",     \
                         field);                                 \
         else                                                    \
                 sprintf(str + strlen(str), "*");                \
