@@ -281,10 +281,12 @@ ifndef OBJDUMP
   OBJDUMP = $(CROSS_COMPILE)objdump
 endif
 
-HOSTCFLAGS   = -std=gnu89 -Wall -Wno-unused -Wmissing-prototypes \
+HOSTCFLAGS   = -std=gnu89 -Wall -Wno-unused -Wno-unused-value \
+               -Wno-unused-parameter -Wno-unused-variable -Wmissing-prototypes \
                -Wstrict-prototypes -O2 -fomit-frame-pointer \
                -Wno-missing-field-initializers
-HOSTCXXFLAGS = -std=gnu89 -Wall -Wno-unused -Wmissing-prototypes \
+HOSTCXXFLAGS = -std=gnu89 -Wall -Wno-unused -Wno-unused-value \
+               -Wno-unused-parameter -Wno-unused-variable -Wmissing-prototypes \
                -Wstrict-prototypes -O2 -fomit-frame-pointer \
                -Wno-missing-field-initializers
 
@@ -394,7 +396,8 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include -Iinclude \
 KBUILD_CPPFLAGS := -D__KERNEL__
 
 KBUILD_CFLAGS   := -Wall -W -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -Wno-unused-value -Wno-unused-parameter -Wno-format -mno-sse \
+		   -Wno-unused -Wno-unused-value -Wno-unused-variable \
+       -Wno-unused-parameter -Wno-format -Wno-uninitialized -mno-sse \
 		   -Wno-unknown-warning-option -Wno-missing-field-initializers \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
