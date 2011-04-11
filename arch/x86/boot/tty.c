@@ -27,7 +27,7 @@ int early_serial_base;
  * error during initialization.
  */
 
-static void asmregparm __attribute__((section(".inittext"))) serial_putchar(int ch)
+static void __attribute__((section(".inittext"))) serial_putchar(int ch)
 {
 	unsigned timeout = 0xffff;
 
@@ -37,7 +37,7 @@ static void asmregparm __attribute__((section(".inittext"))) serial_putchar(int 
 	outb(ch, early_serial_base + TXR);
 }
 
-static void asmregparm __attribute__((section(".inittext"))) bios_putchar(int ch)
+static void __attribute__((section(".inittext"))) bios_putchar(int ch)
 {
 	struct biosregs ireg;
 
