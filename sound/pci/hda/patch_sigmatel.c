@@ -94,6 +94,7 @@ enum {
 	STAC_92HD83XXX_REF,
 	STAC_92HD83XXX_PWR_REF,
 	STAC_DELL_S14,
+	STAC_DELL_E5520M,
 	STAC_92HD83XXX_HP,
 	STAC_HP_DV7_4000,
 	STAC_92HD83XXX_MODELS
@@ -586,7 +587,12 @@ static hda_nid_t stac92hd83xxx_pin_nids[10] = {
 	0x0f, 0x10, 0x11, 0x1f, 0x20,
 };
 
-static hda_nid_t stac92hd88xxx_pin_nids[10] = {
+static hda_nid_t stac92hd87xxx_pin_nids[6] = {
+	0x0a, 0x0b, 0x0c, 0x0d,
+	0x0f, 0x11,
+};
+
+static hda_nid_t stac92hd88xxx_pin_nids[8] = {
 	0x0a, 0x0b, 0x0c, 0x0d,
 	0x0f, 0x11, 0x1f, 0x20,
 };
@@ -752,7 +758,7 @@ static int stac92xx_mux_enum_put(struct snd_kcontrol *kcontrol, struct snd_ctl_e
 	struct sigmatel_spec *spec = codec->spec;
 	unsigned int adc_idx = snd_ctl_get_ioffidx(kcontrol, &ucontrol->id);
 	const struct hda_input_mux *imux = spec->input_mux;
-	unsigned int idx, prev_idx;
+	unsigned int idx, prev_idx, didx;
 
 	idx = ucontrol->value.enumerated.item[0];
 	if (idx >= imux->num_items)
@@ -764,7 +770,8 @@ static int stac92xx_mux_enum_put(struct snd_kcontrol *kcontrol, struct snd_ctl_e
 		snd_hda_codec_write_cache(codec, spec->mux_nids[adc_idx], 0,
 					  AC_VERB_SET_CONNECT_SEL,
 					  imux->items[idx].index);
-		if (prev_idx >= spec->num_analog_muxes) {
+		if (prev_idx >= spec->num_analog_muxes &&
+		    spec->mux_nids[adc_idx] != spec->dmux_nids[adc_idx]) {
 			imux = spec->dinput_mux;
 			/* 0 = analog */
 			snd_hda_codec_write_cache(codec,
@@ -774,9 +781,13 @@ static int stac92xx_mux_enum_put(struct snd_kcontrol *kcontrol, struct snd_ctl_e
 		}
 	} else {
 		imux = spec->dinput_mux;
+		/* first dimux item is hardcoded to select analog imux,
+		 * so lets skip it
+		 */
+		didx = idx - spec->num_analog_muxes + 1;
 		snd_hda_codec_write_cache(codec, spec->dmux_nids[adc_idx], 0,
 					  AC_VERB_SET_CONNECT_SEL,
-					  imux->items[idx - 1].index);
+					  imux->items[didx].index);
 	}
 	spec->cur_mux[adc_idx] = idx;
 	return 1;
@@ -1647,6 +1658,13 @@ static unsigned int dell_s14_pin_configs[10] = {
 	0x40f000f0, 0x40f000f0,
 };
 
+/* Switch int mic from 0x20 to 0x11 */
+static unsigned int dell_e5520m_pin_configs[10] = {
+	0x04a11020, 0x0421101f, 0x400000f0, 0x90170110,
+	0x23011050, 0x23a1102e, 0x400000f3, 0xd5a30130,
+	0x400000f0, 0x40f000f0,
+};
+
 static unsigned int hp_dv7_4000_pin_configs[10] = {
 	0x03a12050, 0x0321201f, 0x40f000f0, 0x90170110,
 	0x40f000f0, 0x40f000f0, 0x90170110, 0xd5a30140,
@@ -1657,6 +1675,7 @@ static unsigned int *stac92hd83xxx_brd_tbl[STAC_92HD83XXX_MODELS] = {
 	[STAC_92HD83XXX_REF] = ref92hd83xxx_pin_configs,
 	[STAC_92HD83XXX_PWR_REF] = ref92hd83xxx_pin_configs,
 	[STAC_DELL_S14] = dell_s14_pin_configs,
+	[STAC_DELL_E5520M] = dell_e5520m_pin_configs,
 	[STAC_HP_DV7_4000] = hp_dv7_4000_pin_configs,
 };
 
@@ -1665,6 +1684,7 @@ static const char * const stac92hd83xxx_models[STAC_92HD83XXX_MODELS] = {
 	[STAC_92HD83XXX_REF] = "ref",
 	[STAC_92HD83XXX_PWR_REF] = "mic-ref",
 	[STAC_DELL_S14] = "dell-s14",
+	[STAC_DELL_E5520M] = "dell-e5520m",
 	[STAC_92HD83XXX_HP] = "hp",
 	[STAC_HP_DV7_4000] = "hp-dv7-4000",
 };
@@ -1677,6 +1697,14 @@ static struct snd_pci_quirk stac92hd83xxx_cfg_tbl[] = {
 		      "DFI LanParty", STAC_92HD83XXX_REF),
 	SND_PCI_QUIRK(PCI_VENDOR_ID_DELL, 0x02ba,
 		      "unknown Dell", STAC_DELL_S14),
+	SND_PCI_QUIRK(PCI_VENDOR_ID_DELL, 0x049a,
+		      "Dell E5520", STAC_DELL_E5520M),
+	SND_PCI_QUIRK(PCI_VENDOR_ID_DELL, 0x049b,
+		      "Dell E5420", STAC_DELL_E5520M),
+	SND_PCI_QUIRK(PCI_VENDOR_ID_DELL, 0x04eb,
+		      "Dell E5420m", STAC_DELL_E5520M),
+	SND_PCI_QUIRK(PCI_VENDOR_ID_DELL, 0x04ec,
+		      "Dell E5520m", STAC_DELL_E5520M),
 	SND_PCI_QUIRK_MASK(PCI_VENDOR_ID_HP, 0xff00, 0x3600,
 		      "HP", STAC_92HD83XXX_HP),
 	{} /* terminator */
@@ -5430,12 +5458,13 @@ again:
 	switch (codec->vendor_id) {
 	case 0x111d76d1:
 	case 0x111d76d9:
+	case 0x111d76e5:
 		spec->dmic_nids = stac92hd87b_dmic_nids;
 		spec->num_dmics = stac92xx_connected_ports(codec,
 				stac92hd87b_dmic_nids,
 				STAC92HD87B_NUM_DMICS);
-		spec->num_pins = ARRAY_SIZE(stac92hd88xxx_pin_nids);
-		spec->pin_nids = stac92hd88xxx_pin_nids;
+		spec->num_pins = ARRAY_SIZE(stac92hd87xxx_pin_nids);
+		spec->pin_nids = stac92hd87xxx_pin_nids;
 		spec->mono_nid = 0;
 		spec->num_pwrs = 0;
 		break;
@@ -5443,6 +5472,7 @@ again:
 	case 0x111d7667:
 	case 0x111d7668:
 	case 0x111d7669:
+	case 0x111d76e3:
 		spec->num_dmics = stac92xx_connected_ports(codec,
 				stac92hd88xxx_dmic_nids,
 				STAC92HD88XXX_NUM_DMICS);
@@ -6387,6 +6417,8 @@ static struct hda_codec_preset snd_hda_preset_sigmatel[] = {
 	{ .id = 0x111d76cd, .name = "92HD89F2", .patch = patch_stac92hd73xx },
 	{ .id = 0x111d76ce, .name = "92HD89F1", .patch = patch_stac92hd73xx },
 	{ .id = 0x111d76e0, .name = "92HD91BXX", .patch = patch_stac92hd83xxx},
+	{ .id = 0x111d76e3, .name = "92HD98BXX", .patch = patch_stac92hd83xxx},
+	{ .id = 0x111d76e5, .name = "92HD99BXX", .patch = patch_stac92hd83xxx},
 	{ .id = 0x111d76e7, .name = "92HD90BXX", .patch = patch_stac92hd83xxx},
 	{} /* terminator */
 };
