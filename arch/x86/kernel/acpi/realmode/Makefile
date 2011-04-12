@@ -29,18 +29,23 @@ bootsrc		:= $(src)/../../../boot
 # that way we can complain to the user if the CPU is insufficient.
 # Compile with _SETUP since this is similar to the boot-time setup code.
 KBUILD_CFLAGS	:= $(LINUXINCLUDE) -g -Os -D_SETUP -D_WAKEUP -D__KERNEL__ \
-		   -I$(srctree)/$(bootsrc) \
-		   $(cflags-y) \
-		   -Wall -Wstrict-prototypes \
-		   -march=i386 -mregparm=3 -no-integrated-as \
-		   -include $(srctree)/$(bootsrc)/code16gcc.h \
-		   -fno-strict-aliasing -fomit-frame-pointer \
-		   $(call cc-option, -ffreestanding) \
-		   $(call cc-option, -fno-toplevel-reorder,\
-			$(call cc-option, -fno-unit-at-a-time)) \
-		   $(call cc-option, -fno-stack-protector) \
-		   $(call cc-option, -mpreferred-stack-boundary=2)
-KBUILD_CFLAGS	+= $(call cc-option, -m32)
+       -i$(srctree)/$(bootsrc) \
+       $(cflags-y) \
+       $(call cc-option, -Wall) \
+       $(call cc-option, -Wstrict-prototypes) \
+       $(call cc-option, -march=i386) \
+       $(call cc-option, -mregparm=3) \
+       $(call cc-option, -no-integrated-as) \
+       $(call cc-option, -fno-strict-aliasing) \
+       $(call cc-option, -fomit-frame-pointer) \
+       $(call cc-option, -ffreestanding) \
+       $(call cc-option, -fno-toplevel-reorder) \
+       $(call cc-option, -fno-unit-at-a-time) \
+       $(call cc-option, -fno-stack-protector) \
+       $(call cc-option, -mpreferred-stack-boundary=2) \
+       $(call cc-option, -m32) \
+       -include $(srctree)/$(bootsrc)/code16gcc.h
+
 KBUILD_AFLAGS	:= $(KBUILD_CFLAGS) -D__ASSEMBLY__
 GCOV_PROFILE := n
 

@@ -57,19 +57,26 @@ $(obj)/cpustr.h: $(obj)/mkcpustr FORCE
 
 # How to compile the 16-bit code.  Note we always compile for -march=i386,
 # that way we can complain to the user if the CPU is insufficient.
-KBUILD_CFLAGS	:= $(LINUXINCLUDE) -g -Os -D_SETUP -D__KERNEL__ \
-		   -DDISABLE_BRANCH_PROFILING \
-		   -Wall -W -Wstrict-prototypes \
-		   -Wno-unused-value -Wno-unused-parameter -mno-sse \
-		   -march=i386 -mregparm=3 -no-integrated-as \
-		   -include $(srctree)/$(src)/code16gcc.h \
-		   -fno-strict-aliasing -fomit-frame-pointer \
-		   $(call cc-option, -ffreestanding) \
-		   $(call cc-option, -fno-toplevel-reorder,\
-			$(call cc-option, -fno-unit-at-a-time)) \
-		   $(call cc-option, -fno-stack-protector) \
-		   $(call cc-option, -mpreferred-stack-boundary=2)
-KBUILD_CFLAGS	+= $(call cc-option, -m32)
+KBUILD_CFLAGS := $(LINUXINCLUDE) -g -Os -D_SETUP -D__KERNEL__ \
+       -DDISABLE_BRANCH_PROFILING \
+       $(call cc-option, -Wall) \
+       $(call cc-option, -Wstrict-prototypes) \
+       $(call cc-option, -Wno-unused-value) \
+       $(call cc-option, -Wno-unused-parameter) \
+       $(call cc-option, -mno-sse) \
+       $(call cc-option, -march=i386) \
+       $(call cc-option, -mregparm=3) \
+       $(call cc-option, -no-integrated-as) \
+       $(call cc-option, -fno-strict-aliasing) \
+       $(call cc-option, -fomit-frame-pointer) \
+       $(call cc-option, -ffreestanding) \
+       $(call cc-option, -fno-toplevel-reorder) \
+       $(call cc-option, -fno-unit-at-a-time) \
+       $(call cc-option, -fno-stack-protector) \
+       $(call cc-option, -mpreferred-stack-boundary=2) \
+       $(call cc-option, -m32) \
+       -include $(srctree)/$(src)/code16gcc.h 
+
 KBUILD_AFLAGS	:= $(KBUILD_CFLAGS) -D__ASSEMBLY__
 GCOV_PROFILE := n
 

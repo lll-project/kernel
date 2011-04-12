@@ -37,7 +37,7 @@ $(obj)/%.so: OBJCOPYFLAGS := -S
 $(obj)/%.so: $(obj)/%.so.dbg FORCE
 	$(call if_changed,objcopy)
 
-CFL := $(PROFILING) -Xclang -mcode-model -Xclang small -fPIC -m64 \
+CFL := $(PROFILING) $(call cc-option, -mcmodel=small) -fPIC -m64 \
        $(filter -g%,$(KBUILD_CFLAGS)) $(call cc-option, -fno-stack-protector)
 
 $(vobjs): KBUILD_CFLAGS += $(CFL)
