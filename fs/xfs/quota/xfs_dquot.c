@@ -470,7 +470,8 @@ xfs_qm_dqtobp(
 	xfs_dqid_t	id = be32_to_cpu(dqp->q_core.d_id);
 	xfs_trans_t	*tp = (tpp ? *tpp : NULL);
 
-	dqp->q_fileoffset = (xfs_fileoff_t)id / mp->m_quotainfo->qi_dqperchunk;
+	dqp->q_fileoffset = (xfs_fileoff_t)id;
+	do_div(dqp->q_fileoffset, mp->m_quotainfo->qi_dqperchunk);
 
 	xfs_ilock(quotip, XFS_ILOCK_SHARED);
 	if (XFS_IS_THIS_QUOTA_OFF(dqp)) {
