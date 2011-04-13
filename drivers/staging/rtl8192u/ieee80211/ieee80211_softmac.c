@@ -222,7 +222,7 @@ u8 MgntQuery_MgntFrameTxRate(struct ieee80211_device *ieee)
 
 void ieee80211_sta_wakeup(struct ieee80211_device *ieee, short nl);
 
-inline void softmac_mgmt_xmit(struct sk_buff *skb, struct ieee80211_device *ieee)
+void softmac_mgmt_xmit(struct sk_buff *skb, struct ieee80211_device *ieee)
 {
 	unsigned long flags;
 	short single = ieee->softmac_features & IEEE_SOFTMAC_SINGLE_QUEUE;
