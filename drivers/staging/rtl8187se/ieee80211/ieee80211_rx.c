@@ -909,7 +909,7 @@ ieee80211_TranslateToDbm(
 
 	return SignalPower;
 }
-inline int ieee80211_network_init(
+static inline int ieee80211_network_init(
 	struct ieee80211_device *ieee,
 	struct ieee80211_probe_response *beacon,
 	struct ieee80211_network *network,
@@ -1235,7 +1235,7 @@ static inline int is_same_network(struct ieee80211_network *src,
 		(dst->capability & WLAN_CAPABILITY_BSS)));
 }
 
-inline void update_network(struct ieee80211_network *dst,
+static inline void update_network(struct ieee80211_network *dst,
 				  struct ieee80211_network *src)
 {
 	unsigned char quality = src->stats.signalstrength;
@@ -1322,7 +1322,7 @@ inline void update_network(struct ieee80211_network *dst,
 }
 
 
-inline void ieee80211_process_probe_response(
+static inline void ieee80211_process_probe_response(
 	struct ieee80211_device *ieee,
 	struct ieee80211_probe_response *beacon,
 	struct ieee80211_rx_stats *stats)

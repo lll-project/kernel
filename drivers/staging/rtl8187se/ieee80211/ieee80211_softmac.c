@@ -186,7 +186,7 @@ void init_mgmt_queue(struct ieee80211_device *ieee)
 
 void ieee80211_sta_wakeup(struct ieee80211_device *ieee, short nl);
 
-inline void softmac_mgmt_xmit(struct sk_buff *skb, struct ieee80211_device *ieee)
+void softmac_mgmt_xmit(struct sk_buff *skb, struct ieee80211_device *ieee)
 {
 	unsigned long flags;
 	short single = ieee->softmac_features & IEEE_SOFTMAC_SINGLE_QUEUE;
@@ -237,7 +237,7 @@ inline void softmac_mgmt_xmit(struct sk_buff *skb, struct ieee80211_device *ieee
 }
 
 
-inline void softmac_ps_mgmt_xmit(struct sk_buff *skb, struct ieee80211_device *ieee)
+void softmac_ps_mgmt_xmit(struct sk_buff *skb, struct ieee80211_device *ieee)
 {
 
 	short single = ieee->softmac_features & IEEE_SOFTMAC_SINGLE_QUEUE;
@@ -315,7 +315,7 @@ SendDisassociation(
 }
 
 //by amy for power save
-inline struct sk_buff *ieee80211_probe_req(struct ieee80211_device *ieee)
+static inline struct sk_buff *ieee80211_probe_req(struct ieee80211_device *ieee)
 {
 	unsigned int len,rate_len;
 	u8 *tag;
@@ -1026,7 +1026,7 @@ void ieee80211_resp_to_probe(struct ieee80211_device *ieee, u8 *dest)
 }
 
 
-inline struct sk_buff *ieee80211_association_req(struct ieee80211_network *beacon,struct ieee80211_device *ieee)
+struct sk_buff *ieee80211_association_req(struct ieee80211_network *beacon,struct ieee80211_device *ieee)
 {
 	struct sk_buff *skb;
 	//unsigned long flags;
@@ -1307,7 +1307,7 @@ void ieee80211_associate_procedure_wq(struct work_struct *work)
 	up(&ieee->wx_sem);
 }
 
-inline void ieee80211_softmac_new_net(struct ieee80211_device *ieee, struct ieee80211_network *net)
+void ieee80211_softmac_new_net(struct ieee80211_device *ieee, struct ieee80211_network *net)
 {
 	u8 tmp_ssid[IW_ESSID_MAX_SIZE+1];
 	int tmp_ssid_len = 0;
@@ -1644,7 +1644,7 @@ short ieee80211_sta_ps_sleep(struct ieee80211_device *ieee, u32 *time_h, u32 *ti
 
 }
 
-inline void ieee80211_sta_ps(struct ieee80211_device *ieee)
+static inline void ieee80211_sta_ps(struct ieee80211_device *ieee)
 {
 
 	u32 th,tl;
