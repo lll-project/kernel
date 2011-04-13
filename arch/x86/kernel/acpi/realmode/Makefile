@@ -29,7 +29,7 @@ bootsrc		:= $(src)/../../../boot
 # that way we can complain to the user if the CPU is insufficient.
 # Compile with _SETUP since this is similar to the boot-time setup code.
 KBUILD_CFLAGS	:= $(LINUXINCLUDE) -g -Os -D_SETUP -D_WAKEUP -D__KERNEL__ \
-       -i$(srctree)/$(bootsrc) \
+       -I$(srctree)/$(bootsrc) \
        $(cflags-y) \
        $(call cc-option, -Wall) \
        $(call cc-option, -Wstrict-prototypes) \
