@@ -169,28 +169,26 @@ maintainer="$name <$email>"
 
 # Generate a simple changelog template
 cat <<EOF > debian/changelog
-linux-upstream ($packageversion) unstable; urgency=low
+lll-kernel ($packageversion) unstable; urgency=low
 
-  * Custom built Linux kernel.
+  * Clang-compile Linux kernel 
 
  -- $maintainer  $(date -R)
 EOF
 
 # Generate copyright file
 cat <<EOF > debian/copyright
-This is a packacked upstream version of the Linux kernel.
+Clang-compatible Linux kernel, from the lll-project. Source code at:
 
-The sources may be found at most Linux ftp sites, including:
-ftp://ftp.kernel.org/pub/linux/kernel
-
-Copyright: 1991 - 2009 Linus Torvalds and others.
+  https://github.com/lll-project
 
 The git repository for mainline kernel development is at:
-git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; version 2 dated June, 1991.
+  git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 2 dated June, 1991.
 
 On Debian GNU/Linux systems, the complete text of the GNU General Public
 License version 2 can be found in \`/usr/share/common-licenses/GPL-2'.
@@ -198,12 +196,12 @@ EOF
 
 # Generate a control file
 cat <<EOF > debian/control
-Source: linux-upstream
+Source: lll-kernel 
 Section: kernel
 Priority: optional
 Maintainer: $maintainer
 Standards-Version: 3.8.4
-Homepage: http://www.kernel.org/
+Homepage: https://github.com/lll-project 
 EOF
 
 if [ "$ARCH" = "um" ]; then
@@ -283,8 +281,7 @@ Section: devel
 Provides: linux-kernel-headers
 Architecture: any
 Description: Linux support headers for userspace development
- This package provides userspaces headers from the Linux kernel.  These headers
- are used by the installed headers for GNU glibc and other system libraries.
+ This package provides userspaces headers from the Linux kernel.
 EOF
 
 create_package "$libc_headers_packagename" "$libc_headers_dir"
