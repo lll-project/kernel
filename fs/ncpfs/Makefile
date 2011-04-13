@@ -13,4 +13,4 @@ ncpfs-$(CONFIG_NCPFS_NFS_NS)   += symlink.o
 # If you want debugging output, please uncomment the following line
 # EXTRA_CFLAGS += -DDEBUG_NCP=1
 
-CFLAGS_ncplib_kernel.o := -finline-functions
+CFLAGS_ncplib_kernel.o := $(call cc-option, -finline-functions)
