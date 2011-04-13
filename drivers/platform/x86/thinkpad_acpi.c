@@ -2344,11 +2344,6 @@ static void hotkey_read_nvram(struct tp_nvram_state *n, const u32 m)
 	}
 }
 
-static void hotkey_compare_and_issue_event(struct tp_nvram_state *oldn,
-					   struct tp_nvram_state *newn,
-					   const u32 event_mask)
-{
-
 #define TPACPI_COMPARE_KEY(__scancode, __member) \
 	do { \
 		if ((event_mask & (1 << __scancode)) && \
@@ -2362,8 +2357,27 @@ static void hotkey_compare_and_issue_event(struct tp_nvram_state *oldn,
 		if (event_mask & (1 << __scancode)) \
 			tpacpi_hotkey_send_key(__scancode); \
 	} while (0)                              \
-  //
+//
+static void issue_volchange(const unsigned int oldvol,
+			    const unsigned int newvol,
+			    const u32 event_mask)
+{
+    unsigned int i = oldvol;
 
+    while (i > newvol) {
+	TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_VOLUMEDOWN);
+	i--;
+    }
+    while (i < newvol) {
+	TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_VOLUMEUP);
+	i++;
+    }
+}
+
+static void hotkey_compare_and_issue_event(struct tp_nvram_state *oldn,
+					   struct tp_nvram_state *newn,
+					   const u32 event_mask)
+{
 	TPACPI_COMPARE_KEY(TP_ACPI_HOTKEYSCAN_THINKPAD, thinkpad_toggle);
 	TPACPI_COMPARE_KEY(TP_ACPI_HOTKEYSCAN_FNSPACE, zoom_toggle);
 	TPACPI_COMPARE_KEY(TP_ACPI_HOTKEYSCAN_FNF7, display_toggle);
@@ -2397,7 +2411,7 @@ static void hotkey_compare_and_issue_event(struct tp_nvram_state *oldn,
 		    oldn->volume_level != newn->volume_level) {
 			/* recently muted, or repeated mute keypress, or
 			 * multiple presses ending in mute */
-			issue_volchange(oldn->volume_level, newn->volume_level);
+			issue_volchange(oldn->volume_level, newn->volume_level, event_mask);
 			TPACPI_MAY_SEND_KEY(TP_ACPI_HOTKEYSCAN_MUTE);
 		}
 	} else {
