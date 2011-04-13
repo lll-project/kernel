@@ -25,7 +25,8 @@ ifeq ($(CONFIG_X86_32),y)
                 LDFLAGS_vmlinux := --emit-relocs
         endif
 
-        KBUILD_CFLAGS += -msoft-float -mregparm=3 -freg-struct-return
+        KBUILD_CFLAGS += -msoft-float -mregparm=3 \
+                                $(call cc-option,-freg-struct-return)			
 
         # prevent gcc from keeping the stack 16 byte aligned
         KBUILD_CFLAGS += $(call cc-option,-mpreferred-stack-boundary=2)
