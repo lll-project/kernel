@@ -186,6 +186,8 @@ The git repository for mainline kernel development is at:
 
   git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
 
+Copyright: 1991 - 2011 Linus Torvalds and others.
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; version 2 dated June, 1991.
